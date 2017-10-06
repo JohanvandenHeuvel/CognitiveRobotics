@@ -17,6 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//Hardcoding this shit
+Boxes = []
+heaps = 25;
+oneElementHeap = 25;
+averSize = 1;
+
 // Description of robot(s), and attached sensor(s) used by InstantiateRobot()
 RobotInfo = [
   {body: null,  // for MatterJS body, added by InstantiateRobot()
@@ -26,7 +32,7 @@ RobotInfo = [
      // define right sensor
      {sense: senseDistance,  // function handle, determines type of sensor
       minVal: 0,  // minimum detectable distance, in pixels
-      maxVal: 50,  // maximum detectable distance, in pixels
+      maxVal: 45,  // maximum detectable distance, in pixels
       attachAngle: Math.PI/4,  // where the sensor is mounted on robot body
       lookAngle: 0,  // direction the sensor is looking (relative to center-out)
       id: 'distR',  // a unique, arbitrary ID of the sensor, for printing/debugging
@@ -36,12 +42,32 @@ RobotInfo = [
      // define left sensor
      {sense: senseDistance,
       minVal: 0,
-      maxVal: 50,
+      maxVal: 45,
       attachAngle: -Math.PI/4,
       lookAngle: 0,
       id: 'distL',
       parent: null,
       value: null}
+       ,
+       // define far right sensor
+       {sense: senseDistance,
+           minVal: 0,
+           maxVal: 45,
+           attachAngle: Math.PI/2,
+           lookAngle: 0,
+           id: 'distL',
+           parent: null,
+           value: null}
+       ,
+       // define far left sensor
+       {sense: senseDistance,
+           minVal: 0,
+           maxVal: 45,
+           attachAngle: -Math.PI/2,
+           lookAngle: 0,
+           id: 'distL',
+           parent: null,
+           value: null}
    ]
   }
 ];
@@ -59,7 +85,7 @@ simInfo = {
   baySensor: null,  // currently selected sensor
   bayScale: 3,  // scale within 2nd, inset canvas showing robot in it's "bay"
   doContinue: true,  // whether to continue simulation, set in HTML
-  debugSensors: false,  // plot sensor rays and mark detected objects
+  debugSensors: true,  // plot sensor rays and mark detected objects
   debugMouse: false,  // allow dragging any object with the mouse
   engine: null,  // MatterJS 2D physics engine
   world: null,  // world object (composite of all objects in MatterJS engine)
@@ -112,6 +138,7 @@ function init() {  // called once when loading HTML file
         stack = Matter.Composites.stack(startX, startY,
                                         nBoxX, nBoxY,
                                         gapX, gapY, getBox);
+  boxes = stack.bodies;
   Matter.World.add(simInfo.world, stack);
 
   /* Add debugging mouse control for dragging objects. */
@@ -390,7 +417,22 @@ function getSensorValById(robot, id) {
 
 function robotMove(robot) {
 // This function is called each timestep and should be used to move the robots
+  robotUpdateSensors(robot)
+  rightSens = robot.sensors[0];
+  leftSens = robot.sensors[1];
+  farRightSens = robot.sensors[2];
+  farLeftSens = robot.sensors[3];
 
+  drive(robot, 0.0004);
+  /*if (leftSens.value  < leftSens.maxVal && rightSens.value  < rightSens.maxVal){
+    drive(robot, -0.0012);
+    rotate(robot, 0.05);
+  }
+  else */if (rightSens.value  < rightSens.maxVal || farRightSens.value  < farRightSens.maxVal) {
+      rotate(robot, -0.01);
+  } else if (leftSens.value  < leftSens.maxVal || farLeftSens.value  < farLeftSens.maxVal) {
+      rotate(robot, 0.01);
+  }
 };
 
 function plotSensor(context, x = this.x, y = this.y) {
@@ -513,7 +555,7 @@ function simStep() {
       robots[rr].x = robots[rr].body.position.x - rSize;
       robots[rr].y = robots[rr].body.position.y - rSize;
     }
-    // count and display number of steps
+   // count and display number of steps
     simInfo.curSteps += 1;
     document.getElementById("SimStepLabel").innerHTML =
       padnumber(simInfo.curSteps, 5) +
@@ -522,6 +564,13 @@ function simStep() {
   }
   else {
     toggleSimulation();
+  }
+  if (simInfo.curSteps%120 == 0){
+    positions = boxes.map(function(x){return x.position});
+    clusters = calculateClusters(positions)
+    averSize = averLength(clusters);
+    heaps = clusters.length;
+    oneElementHeap = clusters.filter(function(x){return Array.from(x).length==1}).length;
   }
 }
 
@@ -578,7 +627,9 @@ function repaintBay() {
       sensorString += '<br> id \'' + rsensors[ss].id + '\': ' +
         padnumber(rsensors[ss].value, 2);
     }
-    document.getElementById('SensorLabel').innerHTML = sensorString;
+    document.getElementById('SensorLabel').innerHTML = sensorString + "<br>Amount of heaps: " + heaps.toString()
+        + "<br>Amount of multiple-element heaps: " + (heaps - oneElementHeap).toString()
+        + "<br>Average heap size: " + averSize.toString();
   }
 }
 
@@ -636,4 +687,76 @@ function toggleSimulation() {
   else {
     Matter.Runner.stop(simInfo.runner);
   }
+}
+
+function calculateClusters(positions, currentPos = null) {
+  clusters = [];
+  positionsLeft = Array.from(positions); //The array that contains the positions that haven't been assigned to a cluster yet
+
+  while(positionsLeft.length != 0){
+    thisCluster = [positionsLeft[0]];
+    for (k=0;k<thisCluster.length;k++){
+        closePositions = positionsLeft.filter(function(x){return (cartesianDis(x,thisCluster[k])< 40)});
+        thisCluster = thisCluster.concat(closePositions);
+        thisCluster = uniq(thisCluster);
+        console.log(thisCluster);
+    }
+    clusters.push(thisCluster);
+    positionsLeft = diff(positionsLeft,thisCluster);
+  }
+  return clusters;
+}
+
+/**
+ * Removes all duplicate elements in an array
+ */
+function uniq(arr){
+  return Array.from(new Set(arr));
+}
+
+/**
+ * Computes the difference/complement between 2 arrays
+ */
+function diff(a1,a2){
+    var result = [];
+    for (var i = 0; i < a1.length; i++) {
+        if (a2.indexOf(a1[i]) === -1) {
+            result.push(a1[i]);
+        }
+    }
+    for (i = 0; i < a2.length; i++) {
+        if (a1.indexOf(a2[i]) === -1) {
+            result.push(a2[i]);
+        }
+    }
+    return Array.from(result);
+}
+
+function cartesianDis(posA,posB){
+  return Math.sqrt( Math.pow(posA.x-posB.x,2) + Math.pow(posA.y-posB.y,2))
+}
+
+function sum(array){
+  total = 0
+  for (i in array){
+    total += array[i]
+  }
+  return total
+}
+
+/**
+ * Computes the average length of the nested arrays in an array
+ */
+function averLength(array){
+    total = 0
+    for (i in array){
+        total += array[i].length
+    }
+    return total/array.length
+}
+
+function flatten(arr) {
+    return arr.reduce(function (flat, toFlatten) {
+        return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+    }, []);
 }
