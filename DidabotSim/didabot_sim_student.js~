@@ -18,51 +18,30 @@
  */
 
 // Description of robot(s), and attached sensor(s) used by InstantiateRobot()
-const sensorlength = 30;
-
 RobotInfo = [
   {body: null,  // for MatterJS body, added by InstantiateRobot()
    color: "red",  // color of the robot marker
    init: {x: 50, y: 50, angle: 0},  // initial position and orientation
    sensors: [  // define an array of sensors on the robot
-       // def 90 degrees right sensor
-       {sense: senseDistance,  // function handle, determines type of sensor
-           minVal: 0,  // minimum detectable distance, in pixels
-           maxVal: sensorlength,  // maximum detectable distance, in pixels
-           attachAngle: Math.PI/2,  // where the sensor is mounted on robot body
-           lookAngle: 0,  // direction the sensor is looking (relative to center-out)
-           id: 'distR4',  // a unique, arbitrary ID of the sensor, for printing/debugging
-           parent: null,  // robot object the sensor is attached to, added by InstantiateRobot
-           value: null  // sensor value, i.e. distance in pixels; updated by sense() function
-       },
-       // define 45 degrees right sensor
-       {sense: senseDistance,  // function handle, determines type of sensor
-           minVal: 0,  // minimum detectable distance, in pixels
-           maxVal: sensorlength,  // maximum detectable distance, in pixels
-           attachAngle: Math.PI/4,  // where the sensor is mounted on robot body
-           lookAngle: 0,  // direction the sensor is looking (relative to center-out)
-           id: 'distR3',  // a unique, arbitrary ID of the sensor, for printing/debugging
-           parent: null,  // robot object the sensor is attached to, added by InstantiateRobot
-           value: null  // sensor value, i.e. distance in pixels; updated by sense() function
-       },
-       // def 45 degrees left sensor
-       {sense: senseDistance,
-           minVal: 0,
-           maxVal: sensorlength,
-           attachAngle: -Math.PI/4,
-           lookAngle: 0,
-           id: 'distR1',
-           parent: null,
-           value: null},
-       // def 90 degrees left sensor
-       {sense: senseDistance,
-           minVal: 0,
-           maxVal: sensorlength,
-           attachAngle: -Math.PI/2,
-           lookAngle: 0,
-           id: 'distR0',
-           parent: null,
-           value: null}
+     // define right sensor
+     {sense: senseDistance,  // function handle, determines type of sensor
+      minVal: 0,  // minimum detectable distance, in pixels
+      maxVal: 50,  // maximum detectable distance, in pixels
+      attachAngle: Math.PI/4,  // where the sensor is mounted on robot body
+      lookAngle: 0,  // direction the sensor is looking (relative to center-out)
+      id: 'distR',  // a unique, arbitrary ID of the sensor, for printing/debugging
+      parent: null,  // robot object the sensor is attached to, added by InstantiateRobot
+      value: null  // sensor value, i.e. distance in pixels; updated by sense() function
+     },
+     // define left sensor
+     {sense: senseDistance,
+      minVal: 0,
+      maxVal: 50,
+      attachAngle: -Math.PI/4,
+      lookAngle: 0,
+      id: 'distL',
+      parent: null,
+      value: null}
    ]
   }
 ];
@@ -81,7 +60,7 @@ simInfo = {
   bayScale: 3,  // scale within 2nd, inset canvas showing robot in it's "bay"
   doContinue: true,  // whether to continue simulation, set in HTML
   debugSensors: true,  // plot sensor rays and mark detected objects
-  debugMouse: true,  // allow dragging any object with the mouse
+  debugMouse: false,  // allow dragging any object with the mouse
   engine: null,  // MatterJS 2D physics engine
   world: null,  // world object (composite of all objects in MatterJS engine)
   runner: null,  // object for running MatterJS engine
@@ -411,48 +390,8 @@ function getSensorValById(robot, id) {
 
 function robotMove(robot) {
 // This function is called each timestep and should be used to move the robots
-
-
-    /*
-    distR4 farRight [0]
-    distR3 right [1]
-    distR0 farLeft [2]
-    distR1 left [3]
-     */
-
-    left = robot.sensors[3].value == Infinity ? robot.sensors[3].maxVal : robot.sensors[3].value;
-    left90 = robot.sensors[2].value == Infinity ? robot.sensors[2].maxVal : robot.sensors[2].value;
-
-    right = robot.sensors[1].value == Infinity ? robot.sensors[1].maxVal :  robot.sensors[1].value;
-    right90 = robot.sensors[0].value == Infinity ? robot.sensors[0].maxVal :  robot.sensors[0].value;
-
-    const angle = 0.005;
-    const forward = 0.0004;
-
-    leftTotal = left + left90;
-    rightTotal = right + right90;
-
-    leftAngle = leftTotal * angle;
-    rightAngle = rightTotal * angle;
-
-    direction = 0 - leftAngle + rightAngle; //rotates faster when far away
-
-    drive(robot, forward);
-    rotate(robot, direction);
-
-
-    // if(leftforce - rightforce < 5 && leftforce - rightforce > 0 && front < 5)
-    // {
-    //   rotate(robot, 3*angle);
-    //   drive(robot, -1*forward);
-    // }
-    // else
-    // {
-    //   rotate(robot, direction);
-    //   drive(robot, forward);
-    // }
-
-
+    rotate(robot, 30);
+    drive(robot, 9000);
 };
 
 function plotSensor(context, x = this.x, y = this.y) {
