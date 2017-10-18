@@ -521,6 +521,7 @@ function robotMove(robot) {
   farLeftSens = robot.sensors[3];
 
 
+
     /*
     distR4 farRight [0]
     distR3 right [1]
@@ -537,8 +538,10 @@ function robotMove(robot) {
     const angle = 0.005;
     const forward = 0.0004;
 
-    leftTotal = left + left90;
-    rightTotal = right + right90;
+
+
+    leftTotal = (left + 0.3 * Math.random() - 0.3 * Math.random()) + (left90 + 0.3 * Math.random() - 0.3 * Math.random());
+    rightTotal = (right + 0.3 * Math.random() - 0.3 * Math.random()) + (right90 + 0.3 * Math.random() - 0.3 * Math.random());
 
     leftAngle = leftTotal * angle;
     rightAngle = rightTotal * angle;
@@ -713,12 +716,12 @@ function simStep() {
     updateStatistics();
   }
 
-    if (simInfo.curSteps%5 == 0){
+    /*if (simInfo.curSteps%5 == 0){
     Matter.World.add(simInfo.world, [Matter.Bodies.rectangleCollisionless(robots[0].x+simInfo.robotSize/2, robots[0].y+simInfo.robotSize/2, 1, 1,//x, y, simInfo.boxSize, simInfo.boxSize,
         {frictionAir: simInfo.airDrag,
             friction: simInfo.boxFric,
             mass: simInfo.boxMass,
-            role: 'point'})]);};
+            role: 'point'})]);};*/
 }
 
 function updateStatistics() {
