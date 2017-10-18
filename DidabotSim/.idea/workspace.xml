@@ -21,8 +21,8 @@
       <file leaf-file-name="didabot_sim_student.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/didabot_sim_student.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="258">
-              <caret line="723" column="34" lean-forward="false" selection-start-line="723" selection-start-column="34" selection-end-line="723" selection-end-column="34" />
+            <state relative-caret-position="15">
+              <caret line="615" column="49" lean-forward="true" selection-start-line="615" selection-start-column="49" selection-end-line="615" selection-end-column="49" />
               <folding />
             </state>
           </provider>
@@ -37,6 +37,7 @@
       <find>rayLength</find>
       <find>fps</find>
       <find>time</find>
+      <find>console.log</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -157,15 +158,15 @@
       <workItem from="1507202391442" duration="3203000" />
       <workItem from="1507294485056" duration="12900000" />
       <workItem from="1507790860913" duration="6260000" />
-      <workItem from="1508326706847" duration="933000" />
+      <workItem from="1508326706847" duration="2830000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="29971000" />
+    <option name="totallyTimeSpent" value="31868000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1" y="-4" width="1602" height="912" extended-state="6" />
+    <frame x="-1" y="-4" width="1602" height="905" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.218125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -622,8 +623,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/didabot_sim_student.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="258">
-          <caret line="723" column="34" lean-forward="false" selection-start-line="723" selection-start-column="34" selection-end-line="723" selection-end-column="34" />
+        <state relative-caret-position="15">
+          <caret line="615" column="49" lean-forward="true" selection-start-line="615" selection-start-column="49" selection-end-line="615" selection-end-column="49" />
           <folding />
         </state>
       </provider>

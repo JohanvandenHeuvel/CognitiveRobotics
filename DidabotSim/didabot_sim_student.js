@@ -695,11 +695,11 @@ function simStep() {
   }
   else {
     console.log("<br><b>        averageGroupSize:       </b><br>")
-    console.log("[" + averageGroupSize.toString() + "]");
+    console.log(averageGroupSize.toString());
       console.log("<br><b>        amountOfHeaps:       </b><br>")
-      console.log("[" + amountOfHeaps.toString() + "]");
+      console.log(amountOfHeaps.toString());
       console.log("<br><b>        percentageInAHeap:       </b><br>")
-      console.log("[" + percentageInAHeap.toString() + "]");
+      console.log(percentageInAHeap.toString());
       console.log("<br><b>        groupDistribution:       </b><br>")
       for (var i = 0; i < groupDistribution.length;i++) {
           console.log("[" + groupDistribution[i].toString() + "]");
@@ -735,12 +735,12 @@ function updateStatistics() {
 
     groups = calculateGroups(positionsNotAtEdge);
 
-    averageGroupSize.push(averLength(groups));
+
     heaps = groups.filter(function(x){return x.length>2});
 
     percentageInAHeap.push(flatten(heaps).length / positions.length);
     amountOfHeaps.push(heaps.length);
-
+    averageGroupSize.push(averLength(heaps));
 
     groupSizes = groups.map(function(x){return x.length});
     distribution = []
