@@ -21,10 +21,12 @@
 
 //Hardcoding this shit
 Boxes = []
-averageGroupSize = [];
+averageHeapSize = [];
 percentageInAHeap = [];
 amountOfHeaps = [];
 groupDistribution = [];
+boxesMoved = [];
+lastPositions = [];
 //fs = null;
 
 // Description of robot(s), and attached sensor(s) used by InstantiateRobot()
@@ -77,7 +79,7 @@ RobotInfo = [
   },
     {body: null,  // for MatterJS body, added by InstantiateRobot()
         color: "blue",  // color of the robot marker
-        init: {x: 200, y: 200, angle: 0},  // initial position and orientation
+        init: {x: 50, y: 400, angle: 0},  // initial position and orientation
         sensors: [  // define an array of sensors on the robot
             // def 90 degrees right sensor
             {sense: senseDistance,  // function handle, determines type of sensor
@@ -694,12 +696,14 @@ function simStep() {
       padnumber(simInfo.maxSteps, 5);
   }
   else {
-    console.log("<br><b>        averageGroupSize:       </b><br>")
-    console.log(averageGroupSize.toString());
+    console.log("<br><b>        averageHeapSize:       </b><br>")
+    console.log(averageHeapSize.toString());
       console.log("<br><b>        amountOfHeaps:       </b><br>")
       console.log(amountOfHeaps.toString());
       console.log("<br><b>        percentageInAHeap:       </b><br>")
       console.log(percentageInAHeap.toString());
+	  console.log("<br><b>        boxesMoved:       </b><br>")
+      console.log(boxesMoved.toString());
       console.log("<br><b>        groupDistribution:       </b><br>")
       for (var i = 0; i < groupDistribution.length;i++) {
           console.log("[" + groupDistribution[i].toString() + "]");
@@ -726,6 +730,10 @@ function simStep() {
 
 function updateStatistics() {
     positions = boxes.map(function(x){return x.position});
+    if (lastPositions.length == 0){
+        lastPositions = positions.map(a => Object.assign({}, a));
+	}
+
     positionsNotAtEdge = positions.filter(function(pos)
     {return (pos.x > simInfo.robotSize + 5)&&
     (pos.x < simInfo.width - (simInfo.boxSize + 5))&&
@@ -734,13 +742,19 @@ function updateStatistics() {
 
 
     groups = calculateGroups(positionsNotAtEdge);
-
+    amountOfBoxesMoved = 0;
+    for (var i = 0; i < positions.length; i++){
+        if (lastPositions[i].x != positions[i].x || lastPositions[i].y != positions[i].y){
+            amountOfBoxesMoved++;
+        }
+    }
+    boxesMoved.push(amountOfBoxesMoved);
 
     heaps = groups.filter(function(x){return x.length>2});
 
     percentageInAHeap.push(flatten(heaps).length / positions.length);
     amountOfHeaps.push(heaps.length);
-    averageGroupSize.push(averLength(heaps));
+    averageHeapSize.push(averLength(heaps));
 
     groupSizes = groups.map(function(x){return x.length});
     distribution = []
@@ -749,6 +763,7 @@ function updateStatistics() {
     }
     distribution[0] += (positions.length - positionsNotAtEdge.length)/ positions.length
     groupDistribution.push(distribution)
+    lastPositions = positions.map(a => Object.assign({}, a));
 }
 
 function drawBoard() {
@@ -804,9 +819,9 @@ function repaintBay() {
       sensorString += '<br> id \'' + rsensors[ss].id + '\': ' +
         padnumber(rsensors[ss].value, 2);
     }
-    if(averageGroupSize.length!=0) {
+    if(averageHeapSize.length!=0) {
         document.getElementById('SensorLabel').innerHTML = sensorString
-            + "<br>averageGroupSize = " + averageGroupSize.slice(-1).pop().toString()
+            + "<br>averageHeapSize = " + averageHeapSize.slice(-1).pop().toString()
             + "<br>percentageInAHeap = " + percentageInAHeap.slice(-1).pop().toString()
             + "<br>amountOfHeaps = " + amountOfHeaps.slice(-1).pop().toString()
             + "<br>groupDistribution = " + groupDistribution.slice(-1).pop().toString();
