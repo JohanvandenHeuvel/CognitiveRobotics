@@ -77,7 +77,7 @@ RobotInfo = [
 ];
 
 simInfo = {
-  maxSteps: 250,  // maximal number of simulation steps to run
+  maxSteps: 20000,  // maximal number of simulation steps to run
   airDrag: 0.1,  // "air" friction of enviroment; 0 is vacuum, 0.9 is molasses
   boxFric: 0.005,//0.005, //
   boxMass: 0.01, //0.01,  // mass of boxes
@@ -579,22 +579,29 @@ function simStep() {
   }
   else {
     console.log("<br><b>        averageGroupSize:       </b><br>")
-    console.log(averageGroupSize);
+    console.log("[" + averageGroupSize.toString() + "]");
       console.log("<br><b>        amountOfHeaps:       </b><br>")
-      console.log(amountOfHeaps);
+      console.log("[" + amountOfHeaps.toString() + "]");
       console.log("<br><b>        percentageInAHeap:       </b><br>")
-      console.log(percentageInAHeap);
+      console.log("[" + percentageInAHeap.toString() + "]");
       console.log("<br><b>        groupDistribution:       </b><br>")
-      console.log(groupDistribution);
+      for (var i = 0; i < groupDistribution.length;i++) {
+          console.log("[" + groupDistribution[i].toString() + "]");
+      }
     toggleSimulation();
   }
+
+    log = function() {
+        var context = "My Descriptive Logger Prefix:";
+        return Function.prototype.bind.call(console.log, console, context);
+    }();
 
   if (simInfo.curSteps%250 == 0){
     updateStatistics();
   }
 
     if (simInfo.curSteps%5 == 0){
-    Matter.World.add(simInfo.world, [Matter.Bodies.rectangleCollisionless(robots[0].x, robots[0].y, 1, 1,//x, y, simInfo.boxSize, simInfo.boxSize,
+    Matter.World.add(simInfo.world, [Matter.Bodies.rectangleCollisionless(robots[0].x+simInfo.robotSize/2, robots[0].y+simInfo.robotSize/2, 1, 1,//x, y, simInfo.boxSize, simInfo.boxSize,
         {frictionAir: simInfo.airDrag,
             friction: simInfo.boxFric,
             mass: simInfo.boxMass,
