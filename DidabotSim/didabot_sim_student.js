@@ -164,14 +164,100 @@ RobotInfo = [
                 parent: null,
                 value: null}
         ]
+    }, {body: null,  // for MatterJS body, added by InstantiateRobot()
+        color: "yellow",  // color of the robot marker
+        init: {x: 400, y: 50, angle: 0},  // initial position and orientation
+        sensors: [  // define an array of sensors on the robot
+            // def 90 degrees right sensor
+            {sense: senseDistance,  // function handle, determines type of sensor
+                minVal: 0,  // minimum detectable distance, in pixels
+                maxVal: sensorlength,  // maximum detectable distance, in pixels
+                attachAngle: Math.PI/2,  // where the sensor is mounted on robot body
+                lookAngle: 0,  // direction the sensor is looking (relative to center-out)
+                id: 'distR4',  // a unique, arbitrary ID of the sensor, for printing/debugging
+                parent: null,  // robot object the sensor is attached to, added by InstantiateRobot
+                value: null  // sensor value, i.e. distance in pixels; updated by sense() function
+            },
+            // define 45 degrees right sensor
+            {sense: senseDistance,  // function handle, determines type of sensor
+                minVal: 0,  // minimum detectable distance, in pixels
+                maxVal: sensorlength,  // maximum detectable distance, in pixels
+                attachAngle: Math.PI/4,  // where the sensor is mounted on robot body
+                lookAngle: 0,  // direction the sensor is looking (relative to center-out)
+                id: 'distR3',  // a unique, arbitrary ID of the sensor, for printing/debugging
+                parent: null,  // robot object the sensor is attached to, added by InstantiateRobot
+                value: null  // sensor value, i.e. distance in pixels; updated by sense() function
+            },
+            // def 45 degrees left sensor
+            {sense: senseDistance,
+                minVal: 0,
+                maxVal: sensorlength,
+                attachAngle: -Math.PI/4,
+                lookAngle: 0,
+                id: 'distR1',
+                parent: null,
+                value: null},
+            // def 90 degrees left sensor
+            {sense: senseDistance,
+                minVal: 0,
+                maxVal: sensorlength,
+                attachAngle: -Math.PI/2,
+                lookAngle: 0,
+                id: 'distR0',
+                parent: null,
+                value: null}
+        ]
+    }, {body: null,  // for MatterJS body, added by InstantiateRobot()
+        color: "purple",  // color of the robot marker
+        init: {x: 150, y: 200, angle: 0},  // initial position and orientation
+        sensors: [  // define an array of sensors on the robot
+            // def 90 degrees right sensor
+            {sense: senseDistance,  // function handle, determines type of sensor
+                minVal: 0,  // minimum detectable distance, in pixels
+                maxVal: sensorlength,  // maximum detectable distance, in pixels
+                attachAngle: Math.PI/2,  // where the sensor is mounted on robot body
+                lookAngle: 0,  // direction the sensor is looking (relative to center-out)
+                id: 'distR4',  // a unique, arbitrary ID of the sensor, for printing/debugging
+                parent: null,  // robot object the sensor is attached to, added by InstantiateRobot
+                value: null  // sensor value, i.e. distance in pixels; updated by sense() function
+            },
+            // define 45 degrees right sensor
+            {sense: senseDistance,  // function handle, determines type of sensor
+                minVal: 0,  // minimum detectable distance, in pixels
+                maxVal: sensorlength,  // maximum detectable distance, in pixels
+                attachAngle: Math.PI/4,  // where the sensor is mounted on robot body
+                lookAngle: 0,  // direction the sensor is looking (relative to center-out)
+                id: 'distR3',  // a unique, arbitrary ID of the sensor, for printing/debugging
+                parent: null,  // robot object the sensor is attached to, added by InstantiateRobot
+                value: null  // sensor value, i.e. distance in pixels; updated by sense() function
+            },
+            // def 45 degrees left sensor
+            {sense: senseDistance,
+                minVal: 0,
+                maxVal: sensorlength,
+                attachAngle: -Math.PI/4,
+                lookAngle: 0,
+                id: 'distR1',
+                parent: null,
+                value: null},
+            // def 90 degrees left sensor
+            {sense: senseDistance,
+                minVal: 0,
+                maxVal: sensorlength,
+                attachAngle: -Math.PI/2,
+                lookAngle: 0,
+                id: 'distR0',
+                parent: null,
+                value: null}
+        ]
     }
 ];
 
 simInfo = {
   maxSteps: 20000,  // maximal number of simulation steps to run
   airDrag: 0.1,  // "air" friction of enviroment; 0 is vacuum, 0.9 is molasses
-  boxFric: 0.005, //
-  boxMass: 0.01,  // mass of boxes
+  boxFric: 0.005,
+  boxMass: 1,  // mass of boxes
   boxSize: 25,  // size of the boxes, in pixels
   robotSize: 14,//2*7,  // robot radius, in pixels
   robotMass: 0.4, // robot mass (a.u)
@@ -228,7 +314,7 @@ function init() {  // called once when loading HTML file
                                     role: 'box'});
   };
   const startX = 100, startY = 100,
-        nBoxX = 3, nBoxY = 4,
+        nBoxX = 5, nBoxY = 5,
         gapX = 40, gapY = 30,
         stack = Matter.Composites.stack(startX, startY,
                                         nBoxX, nBoxY,
@@ -257,7 +343,7 @@ function init() {  // called once when loading HTML file
   Matter.Events.on(simInfo.engine, 'tick', simStep);
 
   /* Create robot(s). */
-  setRobotNumber(3);  // requires defined simInfo.world
+  setRobotNumber(5);  // requires defined simInfo.world
   loadBay(robots[0]);
 
 };
@@ -531,8 +617,8 @@ function robotMove(robot) {
     distR1 left [3]
      */
 
-    left = robot.sensors[3].value == Infinity ? robot.sensors[3].maxVal : robot.sensors[3].value;
-    left90 = robot.sensors[2].value == Infinity ? robot.sensors[2].maxVal : robot.sensors[2].value;
+    left90 = robot.sensors[3].value == Infinity ? robot.sensors[3].maxVal : robot.sensors[3].value;
+    left = robot.sensors[2].value == Infinity ? robot.sensors[2].maxVal : robot.sensors[2].value;
 
     right = robot.sensors[1].value == Infinity ? robot.sensors[1].maxVal :  robot.sensors[1].value;
     right90 = robot.sensors[0].value == Infinity ? robot.sensors[0].maxVal :  robot.sensors[0].value;
@@ -698,11 +784,7 @@ function simStep() {
   else {
       for (var i = 0; i < averageGroupSize.length;i++)
       {
-          console.log(averageGroupSize[i].toString(), amountOfHeaps[i].toString(), percentageInAHeap[i].toString(), boxesMoved[i].toString())
-      }
-      console.log("<br><b>        groupDistribution:       </b><br>")
-      for (var i = 0; i < groupDistribution.length;i++) {
-          console.log("[" + groupDistribution[i].toString() + "]");
+          console.log(averageHeapSize[i].toString(), amountOfHeaps[i].toString(), percentageInAHeap[i].toString(), boxesMoved[i].toString())
       }
     toggleSimulation();
   }
