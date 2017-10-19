@@ -21,10 +21,10 @@
       <file leaf-file-name="didabot_sim_student.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/didabot_sim_student.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="22" column="10" lean-forward="true" selection-start-line="22" selection-start-column="10" selection-end-line="22" selection-end-column="10" />
+            <state relative-caret-position="309">
+              <caret line="171" column="22" lean-forward="false" selection-start-line="171" selection-start-column="22" selection-end-line="171" selection-end-column="22" />
               <folding>
-                <marker date="1508344330645" expanded="true" signature="29471:29473" ph="{...}" />
+                <marker date="1508396700784" expanded="true" signature="29246:29248" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -33,7 +33,7 @@
       <file leaf-file-name="DidabotSimStudent.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DidabotSimStudent.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="229">
+            <state relative-caret-position="441">
               <caret line="21" column="27" lean-forward="false" selection-start-line="21" selection-start-column="27" selection-end-line="21" selection-end-column="27" />
               <folding />
             </state>
@@ -51,6 +51,7 @@
       <find>time</find>
       <find>console.log</find>
       <find>averageGrou</find>
+      <find>log</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -175,11 +176,13 @@
       <workItem from="1508326706847" duration="2830000" />
       <workItem from="1508331865937" duration="41000" />
       <workItem from="1508342629792" duration="2099000" />
+      <workItem from="1508347504481" duration="1255000" />
+      <workItem from="1508396542322" duration="225000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="34008000" />
+    <option name="totallyTimeSpent" value="35488000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1098" extended-state="6" />
@@ -246,7 +249,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1508344330645" expanded="true" signature="29471:29473" ph="{...}" />
+            <marker date="1508396700784" expanded="true" signature="29246:29248" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -263,7 +266,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1508344330645" expanded="true" signature="29471:29473" ph="{...}" />
+            <marker date="1508396700784" expanded="true" signature="29246:29248" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -291,7 +294,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1508344330645" expanded="true" signature="29471:29473" ph="{...}" />
+            <marker date="1508396700784" expanded="true" signature="29246:29248" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -340,7 +343,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1508344330645" expanded="true" signature="29471:29473" ph="{...}" />
+            <marker date="1508396700784" expanded="true" signature="29246:29248" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -377,7 +380,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1508344330645" expanded="true" signature="29471:29473" ph="{...}" />
+            <marker date="1508396700784" expanded="true" signature="29246:29248" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -423,7 +426,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1508344330645" expanded="true" signature="29471:29473" ph="{...}" />
+            <marker date="1508396700784" expanded="true" signature="29246:29248" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -469,7 +472,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1508344330645" expanded="true" signature="29471:29473" ph="{...}" />
+            <marker date="1508396700784" expanded="true" signature="29246:29248" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -511,7 +514,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1508344330645" expanded="true" signature="29471:29473" ph="{...}" />
+            <marker date="1508396700784" expanded="true" signature="29246:29248" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -542,7 +545,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1508344330645" expanded="true" signature="29471:29473" ph="{...}" />
+            <marker date="1508396700784" expanded="true" signature="29246:29248" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -588,7 +591,7 @@
         <state relative-caret-position="345">
           <caret line="23" column="64" lean-forward="false" selection-start-line="23" selection-start-column="64" selection-end-line="23" selection-end-column="64" />
           <folding>
-            <marker date="1508344330645" expanded="true" signature="29471:29473" ph="{...}" />
+            <marker date="1508396700784" expanded="true" signature="29246:29248" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -616,7 +619,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/DidabotSimStudent.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
+        <state relative-caret-position="441">
           <caret line="21" column="27" lean-forward="false" selection-start-line="21" selection-start-column="27" selection-end-line="21" selection-end-column="27" />
           <folding />
         </state>
@@ -624,10 +627,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/didabot_sim_student.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="22" column="10" lean-forward="true" selection-start-line="22" selection-start-column="10" selection-end-line="22" selection-end-column="10" />
+        <state relative-caret-position="309">
+          <caret line="171" column="22" lean-forward="false" selection-start-line="171" selection-start-column="22" selection-end-line="171" selection-end-column="22" />
           <folding>
-            <marker date="1508344330645" expanded="true" signature="29471:29473" ph="{...}" />
+            <marker date="1508396700784" expanded="true" signature="29246:29248" ph="{...}" />
           </folding>
         </state>
       </provider>

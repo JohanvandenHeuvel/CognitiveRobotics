@@ -173,7 +173,7 @@ simInfo = {
   boxFric: 0.005, //
   boxMass: 0.01,  // mass of boxes
   boxSize: 25,  // size of the boxes, in pixels
-  robotSize: 2*7,  // robot radius, in pixels
+  robotSize: 14,//2*7,  // robot radius, in pixels
   robotMass: 0.4, // robot mass (a.u)
   gravity: 0,  // constant acceleration in Y-direction
   bayRobot: null,  // currently selected robot
@@ -696,14 +696,10 @@ function simStep() {
       padnumber(simInfo.maxSteps, 5);
   }
   else {
-    console.log("<br><b>        averageHeapSize:       </b><br>")
-    console.log(averageHeapSize.toString());
-      console.log("<br><b>        amountOfHeaps:       </b><br>")
-      console.log(amountOfHeaps.toString());
-      console.log("<br><b>        percentageInAHeap:       </b><br>")
-      console.log(percentageInAHeap.toString());
-	  console.log("<br><b>        boxesMoved:       </b><br>")
-      console.log(boxesMoved.toString());
+      for (var i = 0; i < averageGroupSize.length;i++)
+      {
+          console.log(averageGroupSize[i].toString(), amountOfHeaps[i].toString(), percentageInAHeap[i].toString(), boxesMoved[i].toString())
+      }
       console.log("<br><b>        groupDistribution:       </b><br>")
       for (var i = 0; i < groupDistribution.length;i++) {
           console.log("[" + groupDistribution[i].toString() + "]");
