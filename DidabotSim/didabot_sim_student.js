@@ -209,7 +209,7 @@ RobotInfo = [
         ]
     }, {body: null,  // for MatterJS body, added by InstantiateRobot()
         color: "purple",  // color of the robot marker
-        init: {x: 150, y: 200, angle: 0},  // initial position and orientation
+        init: {x: 50, y: 200, angle: 0},  // initial position and orientation
         sensors: [  // define an array of sensors on the robot
             // def 90 degrees right sensor
             {sense: senseDistance,  // function handle, determines type of sensor
@@ -258,7 +258,7 @@ simInfo = {
   airDrag: 0.1,  // "air" friction of enviroment; 0 is vacuum, 0.9 is molasses
   boxFric: 0.005,
   boxMass: 1,  // mass of boxes
-  boxSize: 25,  // size of the boxes, in pixels
+  boxSize: 18,  // size of the boxes, in pixels
   robotSize: 14,//2*7,  // robot radius, in pixels
   robotMass: 0.4, // robot mass (a.u)
   gravity: 0,  // constant acceleration in Y-direction
@@ -307,7 +307,8 @@ function init() {  // called once when loading HTML file
 
   /* Add a bunch of boxes in a neat grid. */
   function getBox(x, y) {
-    return Matter.Bodies.rectangle(350*Math.random() + 25, 350*Math.random() + 25, simInfo.boxSize, simInfo.boxSize, //do random
+      //change the 3 to 4 or alot(circle)
+    return Matter.Bodies.polygon(350*Math.random() + 25, 350*Math.random() + 25, simInfo.boxSize, simInfo.boxSize,
                                    {frictionAir: simInfo.airDrag,
                                     friction: simInfo.boxFric,
                                     mass: simInfo.boxMass,
