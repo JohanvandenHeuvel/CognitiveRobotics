@@ -822,7 +822,6 @@ function updateStatistics() {
     (pos.x < simInfo.width - (1.3*simInfo.boxSize + 5))&&
         (pos.y > 1.3*simInfo.robotSize + 5)&&
         (pos.y < simInfo.height - (1.3*simInfo.boxSize + 5))});
-    console.log(positions.length - positionsNotAtEdge.length)
 
     groups = calculateGroups(positionsNotAtEdge);
     amountOfBoxesMoved = 0;
