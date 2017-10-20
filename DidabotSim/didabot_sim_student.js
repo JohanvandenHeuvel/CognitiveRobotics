@@ -254,7 +254,7 @@ RobotInfo = [
 ];
 
 simInfo = {
-  maxSteps: 20000,  // maximal number of simulation steps to run
+  maxSteps: 500,  // maximal number of simulation steps to run
   airDrag: 0.1,  // "air" friction of enviroment; 0 is vacuum, 0.9 is molasses
   boxFric: 0.005,
   boxMass: 1,  // mass of boxes
@@ -308,7 +308,7 @@ function init() {  // called once when loading HTML file
   /* Add a bunch of boxes in a neat grid. */
   function getBox(x, y) {
       //change the 3 to 4 or alot(circle)
-    return Matter.Bodies.polygon(350*Math.random() + 25, 350*Math.random() + 25, simInfo.boxSize, simInfo.boxSize,
+    return Matter.Bodies.polygon(350*Math.random() + 25, 350*Math.random() + 25, 3, simInfo.boxSize,
                                    {frictionAir: simInfo.airDrag,
                                     friction: simInfo.boxFric,
                                     mass: simInfo.boxMass,
@@ -783,7 +783,7 @@ function simStep() {
       padnumber(simInfo.maxSteps, 5);
   }
   else {
-      for (var i = 0; i < averageGroupSize.length;i++)
+      for (var i = 0; i < averageHeapSize.length;i++)
       {
           console.log(averageHeapSize[i].toString(), amountOfHeaps[i].toString(), percentageInAHeap[i].toString(), boxesMoved[i].toString())
       }
