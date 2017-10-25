@@ -1,0 +1,8 @@
+didabot_sim_student.js:792 NaN 0 0 0
+didabot_sim_student.js:792 NaN 0 0 5
+3didabot_sim_student.js:792 NaN 0 0 6
+2didabot_sim_student.js:792 NaN 0 0 8
+2didabot_sim_student.js:792 NaN 0 0 10
+3didabot_sim_student.js:792 3 1 0.25 10
+53didabot_sim_student.js:792 3 1 0.25 11
+268didabot_sim_student.js:792 3 1 0.25 12

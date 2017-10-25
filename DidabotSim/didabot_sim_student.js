@@ -254,7 +254,7 @@ RobotInfo = [
 ];
 
 simInfo = {
-  maxSteps: 500,  // maximal number of simulation steps to run
+  maxSteps: 20000,  // maximal number of simulation steps to run
   airDrag: 0.1,  // "air" friction of enviroment; 0 is vacuum, 0.9 is molasses
   boxFric: 0.005,
   boxMass: 1,  // mass of boxes
@@ -308,14 +308,14 @@ function init() {  // called once when loading HTML file
   /* Add a bunch of boxes in a neat grid. */
   function getBox(x, y) {
       //change the 3 to 4 or alot(circle)
-    return Matter.Bodies.polygon(350*Math.random() + 25, 350*Math.random() + 25, 3, simInfo.boxSize,
+    return Matter.Bodies.polygon(350*Math.random() + 25, 350*Math.random() + 25, 4, simInfo.boxSize,
                                    {frictionAir: simInfo.airDrag,
                                     friction: simInfo.boxFric,
                                     mass: simInfo.boxMass,
                                     role: 'box'});
   };
   const startX = 100, startY = 100,
-        nBoxX = 5, nBoxY = 5,
+        nBoxX = 3, nBoxY = 4,
         gapX = 40, gapY = 30,
         stack = Matter.Composites.stack(startX, startY,
                                         nBoxX, nBoxY,
@@ -344,7 +344,7 @@ function init() {  // called once when loading HTML file
   Matter.Events.on(simInfo.engine, 'tick', simStep);
 
   /* Create robot(s). */
-  setRobotNumber(5);  // requires defined simInfo.world
+  setRobotNumber(1);  // requires defined simInfo.world
   loadBay(robots[0]);
 
 };
@@ -618,26 +618,21 @@ function robotMove(robot) {
     distR1 left [3]
      */
 
-    left90 = robot.sensors[3].value == Infinity ? robot.sensors[3].maxVal : robot.sensors[3].value;
-    left = robot.sensors[2].value == Infinity ? robot.sensors[2].maxVal : robot.sensors[2].value;
-
-    right = robot.sensors[1].value == Infinity ? robot.sensors[1].maxVal :  robot.sensors[1].value;
-    right90 = robot.sensors[0].value == Infinity ? robot.sensors[0].maxVal :  robot.sensors[0].value;
-
     const angle = 0.005;
     const forward = 0.0004;
 
-
+    left90 = robot.sensors[3].value == Infinity ? robot.sensors[3].maxVal : robot.sensors[3].value;
+    left = robot.sensors[2].value == Infinity ? robot.sensors[2].maxVal : robot.sensors[2].value;
+    right = robot.sensors[1].value == Infinity ? robot.sensors[1].maxVal :  robot.sensors[1].value;
+    right90 = robot.sensors[0].value == Infinity ? robot.sensors[0].maxVal :  robot.sensors[0].value;
 
     leftTotal = (left + 0.3 * Math.random() - 0.3 * Math.random()) + (left90 + 0.3 * Math.random() - 0.3 * Math.random());
     rightTotal = (right + 0.3 * Math.random() - 0.3 * Math.random()) + (right90 + 0.3 * Math.random() - 0.3 * Math.random());
-
     leftAngle = leftTotal * angle;
     rightAngle = rightTotal * angle;
 
-    direction = 0 - leftAngle + rightAngle; //rotates faster when far away
-
     drive(robot, forward);
+    direction = 0 - leftAngle + rightAngle; //rotates faster when far away    
     rotate(robot, direction);
 
 
