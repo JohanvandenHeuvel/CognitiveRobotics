@@ -205,6 +205,16 @@ plot3d(y = threedee1robot$avgClustersize, x = threedee1robot$nrOfClusters, z = t
 plot3d(y = threedee1robot$avgClustersize, x = threedee1robot$nrOfClusters, z = threedee1robot$cubesMoved, type = "h", col = "grey", add = TRUE, axes = FALSE)
 grid3d("z", at = NULL, col = "gray", lwd = 1, lty = 1, n = 5)
 
+threedee1robot$id <- seq_len(nrow(threedee1robot))
+ms <- replicate(2, threedee1robot, simplify = F)
+ms[[2]]$cubesMoved <- 0
+m <- group2NA(dplyr::bind_rows(ms), "id")
+
+p <- plot_ly(threedee1robot, x = ~nrOfClusters, y = ~avgClustersize, z = ~cubesMoved, type = 'scatter3d', mode = 'lines',
+        opacity = 1, line = list(width = 6, reverscale = FALSE)) %>% add_paths(data = m, x = ~nrOfClusters, y = ~avgClustersize, z = ~cubesMoved)
+chart_link = plotly_POST(p, filename="robot1", sharing = "public")
+chart_link
+
 threedee2robot = list()
 for(i in c(4)){
   for(x in seq(1,nrow(E1data[[i]][[1]]))){  #loop through rows
@@ -234,6 +244,16 @@ colnames(threedee2robot) <- c("avgClustersize", "nrOfClusters", "cubesMoved")
 plot3d(y = threedee2robot$avgClustersize, x = threedee2robot$nrOfClusters, z = threedee2robot$cubesMoved, type = "l", col = "red", ylab = "Mean Cluster Size", xlab = "Nr. of Clusters", zlab = "Pushing rate", main = "3 Robots")
 plot3d(y = threedee2robot$avgClustersize, x = threedee2robot$nrOfClusters, z = threedee2robot$cubesMoved, type = "h", col = "grey", add = TRUE, axes = FALSE)
 grid3d("z", at = NULL, col = "gray", lwd = 1, lty = 1, n = 5)
+
+threedee2robot$id <- seq_len(nrow(threedee2robot))
+ms <- replicate(2, threedee2robot, simplify = F)
+ms[[2]]$cubesMoved <- 0
+m <- group2NA(dplyr::bind_rows(ms), "id")
+
+p <- plot_ly(threedee2robot, x = ~nrOfClusters, y = ~avgClustersize, z = ~cubesMoved, type = 'scatter3d', mode = 'lines',
+        opacity = 1, line = list(width = 6, reverscale = FALSE)) %>% add_paths(data = m, x = ~nrOfClusters, y = ~avgClustersize, z = ~cubesMoved)
+chart_link = plotly_POST(p, filename="robot2", sharing = "public")
+chart_link
 
 threedee3robot = list()
 for(i in c(6)){
@@ -266,7 +286,17 @@ plot3d(y = threedee3robot$avgClustersize, x = threedee3robot$nrOfClusters, z = t
 grid3d("z", at = NULL, col = "gray", lwd = 1, lty = 1, n = 5)
 
 library(plotly)
-plot_ly(threedee3robot, x = ~nrOfClusters, y = ~avgClustersize, z = ~cubesMoved, type = 'scatter3d', mode = 'lines',
-        opacity = 1, line = list(width = 6, reverscale = FALSE))
+Sys.setenv("plotly_username"="JvdHeuvel")
+Sys.setenv("plotly_api_key"="I8Vfjq67aezzmoMftFzG")
+
+threedee3robot$id <- seq_len(nrow(threedee3robot))
+ms <- replicate(2, threedee3robot, simplify = F)
+ms[[2]]$cubesMoved <- 0
+m <- group2NA(dplyr::bind_rows(ms), "id")
+
+p <- plot_ly(threedee3robot, x = ~nrOfClusters, y = ~avgClustersize, z = ~cubesMoved, type = 'scatter3d', mode = 'lines',
+        opacity = 1, line = list(width = 6, reverscale = FALSE)) %>% add_paths(data = m, x = ~nrOfClusters, y = ~avgClustersize, z = ~cubesMoved)
+chart_link = plotly_POST(p, filename="robot3", sharing = "public")
+chart_link
 ```
 
