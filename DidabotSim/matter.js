@@ -29,6 +29,8 @@
  */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Matter = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+//(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Matter = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+
 /**
 * The `Matter.Body` module contains methods for creating and manipulating body models.
 * A `Matter.Body` is a rigid body that can be simulated by a `Matter.Engine`.
@@ -118,6 +120,62 @@ var Axes = require('../geometry/Axes');
 
         _initProperties(body, options);
 
+        return body;
+    };
+
+    Body.createCollisionLess = function(options) {
+        var defaults = {
+            id: Common.nextId(),
+            type: 'body',
+            label: 'point',
+            parts: [],
+            angle: 0,
+            vertices: Vertices.fromPath('L 0 0 L 40 0 L 40 40 L 0 40'),
+            position: { x: 0, y: 0 },
+            force: { x: 0, y: 0 },
+            torque: 0,
+            positionImpulse: { x: 0, y: 0 },
+            constraintImpulse: { x: 0, y: 0, angle: 0 },
+            totalContacts: 0,
+            speed: 0,
+            angularSpeed: 0,
+            velocity: { x: 0, y: 0 },
+            angularVelocity: 0,
+            isSensor: false,
+            isStatic: true,
+            isSleeping: true,
+            motion: 0,
+            sleepThreshold: 60,
+            density: 0,
+            restitution: 0,
+            friction: 0,
+            frictionStatic: 0,
+            frictionAir: 0,
+            collisionFilter: {
+                category: 0x0003,//0x0002,
+                mask: 0xff0000,//0xFFFFFFFF,
+                group: 3
+            },
+            slop: 0.05,
+            timeScale: 0.0001,
+            render: {
+                fillStyle: '#4ECDC4', //'0xff0000',
+                strokeStyle: '0xff0034',//'#4ECDC4',
+                visible: true,
+                opacity: 1,
+                sprite: {
+                    xScale: 1,
+                    yScale: 1,
+                    xOffset: 0,
+                    yOffset: 0
+                },
+                lineWidth: 1.5
+            }
+        };
+
+        var body = Common.extend(defaults, options);
+
+        _initProperties(body, options);
         return body;
     };
 
@@ -1234,7 +1292,6 @@ var Body = require('./Body');
      */
     Composite.add = function(composite, object) {
         var objects = [].concat(object);
-
         Events.trigger(composite, 'beforeAdd', { object: object });
 
         for (var i = 0; i < objects.length; i++) {
@@ -1248,7 +1305,6 @@ var Body = require('./Body');
                     Common.log('Composite.add: skipped adding a compound body part (you must add its parent instead)', 'warn');
                     break;
                 }
-
                 Composite.addBody(composite, obj);
                 break;
             case 'constraint':
@@ -1506,8 +1562,9 @@ var Body = require('./Body');
     Composite.allBodies = function(composite) {
         var bodies = [].concat(composite.bodies);
 
-        for (var i = 0; i < composite.composites.length; i++)
+        for (var i = 0; i < composite.composites.length; i++) {
             bodies = bodies.concat(Composite.allBodies(composite.composites[i]));
+        }
 
         return bodies;
     };
@@ -5703,7 +5760,25 @@ var Vector = require('../geometry/Vector');
 
         return Body.create(Common.extend({}, rectangle, options));
     };
-    
+
+    Bodies.rectangleCollisionless = function(x, y, width, height, options) {
+        options = options || {};
+        var rectangle = {
+            label: 'point',
+            position: { x: x, y: y },
+            vertices: Vertices.fromPath('L 0 0 L ' + width + ' 0 L ' + width + ' ' + height + ' L 0 ' + height)
+        };
+
+        if (options.chamfer) {
+            var chamfer = options.chamfer;
+            rectangle.vertices = Vertices.chamfer(rectangle.vertices, chamfer.radius,
+                chamfer.quality, chamfer.qualityMin, chamfer.qualityMax);
+            delete options.chamfer;
+        }
+
+        return Body.createCollisionLess(Common.extend({}, rectangle, options));
+    };
+
     /**
      * Creates a new rigid body model with a trapezoid hull. 
      * The options parameter is an object that specifies any properties you wish to override the defaults.
@@ -7395,9 +7470,12 @@ var Common = require('../core/Common');
 
 })();
 
+//fs = require('fs');
+
 },{"../core/Common":14,"../geometry/Vector":26}],28:[function(require,module,exports){
 var Matter = module.exports = {};
 Matter.version = 'master';
+
 
 Matter.Body = require('../body/Body');
 Matter.Composite = require('../body/Composite');

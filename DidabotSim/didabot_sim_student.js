@@ -17,6 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+
+//Hardcoding this shit
+Boxes = []
+averageHeapSize = [];
+percentageInAHeap = [];
+amountOfHeaps = [];
+groupDistribution = [];
+boxesMoved = [];
+lastPositions = [];
+//fs = null;
+
 // Description of robot(s), and attached sensor(s) used by InstantiateRobot()
 const sensorlength = 30;
 
@@ -67,7 +79,7 @@ RobotInfo = [
   },
     {body: null,  // for MatterJS body, added by InstantiateRobot()
         color: "blue",  // color of the robot marker
-        init: {x: 200, y: 200, angle: 0},  // initial position and orientation
+        init: {x: 50, y: 400, angle: 0},  // initial position and orientation
         sensors: [  // define an array of sensors on the robot
             // def 90 degrees right sensor
             {sense: senseDistance,  // function handle, determines type of sensor
@@ -152,16 +164,102 @@ RobotInfo = [
                 parent: null,
                 value: null}
         ]
+    }, {body: null,  // for MatterJS body, added by InstantiateRobot()
+        color: "yellow",  // color of the robot marker
+        init: {x: 400, y: 50, angle: 0},  // initial position and orientation
+        sensors: [  // define an array of sensors on the robot
+            // def 90 degrees right sensor
+            {sense: senseDistance,  // function handle, determines type of sensor
+                minVal: 0,  // minimum detectable distance, in pixels
+                maxVal: sensorlength,  // maximum detectable distance, in pixels
+                attachAngle: Math.PI/2,  // where the sensor is mounted on robot body
+                lookAngle: 0,  // direction the sensor is looking (relative to center-out)
+                id: 'distR4',  // a unique, arbitrary ID of the sensor, for printing/debugging
+                parent: null,  // robot object the sensor is attached to, added by InstantiateRobot
+                value: null  // sensor value, i.e. distance in pixels; updated by sense() function
+            },
+            // define 45 degrees right sensor
+            {sense: senseDistance,  // function handle, determines type of sensor
+                minVal: 0,  // minimum detectable distance, in pixels
+                maxVal: sensorlength,  // maximum detectable distance, in pixels
+                attachAngle: Math.PI/4,  // where the sensor is mounted on robot body
+                lookAngle: 0,  // direction the sensor is looking (relative to center-out)
+                id: 'distR3',  // a unique, arbitrary ID of the sensor, for printing/debugging
+                parent: null,  // robot object the sensor is attached to, added by InstantiateRobot
+                value: null  // sensor value, i.e. distance in pixels; updated by sense() function
+            },
+            // def 45 degrees left sensor
+            {sense: senseDistance,
+                minVal: 0,
+                maxVal: sensorlength,
+                attachAngle: -Math.PI/4,
+                lookAngle: 0,
+                id: 'distR1',
+                parent: null,
+                value: null},
+            // def 90 degrees left sensor
+            {sense: senseDistance,
+                minVal: 0,
+                maxVal: sensorlength,
+                attachAngle: -Math.PI/2,
+                lookAngle: 0,
+                id: 'distR0',
+                parent: null,
+                value: null}
+        ]
+    }, {body: null,  // for MatterJS body, added by InstantiateRobot()
+        color: "purple",  // color of the robot marker
+        init: {x: 50, y: 200, angle: 0},  // initial position and orientation
+        sensors: [  // define an array of sensors on the robot
+            // def 90 degrees right sensor
+            {sense: senseDistance,  // function handle, determines type of sensor
+                minVal: 0,  // minimum detectable distance, in pixels
+                maxVal: sensorlength,  // maximum detectable distance, in pixels
+                attachAngle: Math.PI/2,  // where the sensor is mounted on robot body
+                lookAngle: 0,  // direction the sensor is looking (relative to center-out)
+                id: 'distR4',  // a unique, arbitrary ID of the sensor, for printing/debugging
+                parent: null,  // robot object the sensor is attached to, added by InstantiateRobot
+                value: null  // sensor value, i.e. distance in pixels; updated by sense() function
+            },
+            // define 45 degrees right sensor
+            {sense: senseDistance,  // function handle, determines type of sensor
+                minVal: 0,  // minimum detectable distance, in pixels
+                maxVal: sensorlength,  // maximum detectable distance, in pixels
+                attachAngle: Math.PI/4,  // where the sensor is mounted on robot body
+                lookAngle: 0,  // direction the sensor is looking (relative to center-out)
+                id: 'distR3',  // a unique, arbitrary ID of the sensor, for printing/debugging
+                parent: null,  // robot object the sensor is attached to, added by InstantiateRobot
+                value: null  // sensor value, i.e. distance in pixels; updated by sense() function
+            },
+            // def 45 degrees left sensor
+            {sense: senseDistance,
+                minVal: 0,
+                maxVal: sensorlength,
+                attachAngle: -Math.PI/4,
+                lookAngle: 0,
+                id: 'distR1',
+                parent: null,
+                value: null},
+            // def 90 degrees left sensor
+            {sense: senseDistance,
+                minVal: 0,
+                maxVal: sensorlength,
+                attachAngle: -Math.PI/2,
+                lookAngle: 0,
+                id: 'distR0',
+                parent: null,
+                value: null}
+        ]
     }
 ];
 
 simInfo = {
   maxSteps: 20000,  // maximal number of simulation steps to run
   airDrag: 0.1,  // "air" friction of enviroment; 0 is vacuum, 0.9 is molasses
-  boxFric: 0.005, //
-  boxMass: 0.01,  // mass of boxes
-  boxSize: 25,  // size of the boxes, in pixels
-  robotSize: 2*7,  // robot radius, in pixels
+  boxFric: 0.005,
+  boxMass: 1,  // mass of boxes
+  boxSize: 18,  // size of the boxes, in pixels
+  robotSize: 14,//2*7,  // robot radius, in pixels
   robotMass: 0.4, // robot mass (a.u)
   gravity: 0,  // constant acceleration in Y-direction
   bayRobot: null,  // currently selected robot
@@ -209,7 +307,8 @@ function init() {  // called once when loading HTML file
 
   /* Add a bunch of boxes in a neat grid. */
   function getBox(x, y) {
-    return Matter.Bodies.rectangle(350*Math.random() + 25, 350*Math.random() + 25, simInfo.boxSize, simInfo.boxSize, //do random
+      //change the 3 to 4 or alot(circle)
+    return Matter.Bodies.polygon(350*Math.random() + 25, 350*Math.random() + 25, 4, simInfo.boxSize,
                                    {frictionAir: simInfo.airDrag,
                                     friction: simInfo.boxFric,
                                     mass: simInfo.boxMass,
@@ -221,6 +320,8 @@ function init() {  // called once when loading HTML file
         stack = Matter.Composites.stack(startX, startY,
                                         nBoxX, nBoxY,
                                         gapX, gapY, getBox);
+
+  boxes = stack.bodies;
   Matter.World.add(simInfo.world, stack);
 
   /* Add debugging mouse control for dragging objects. */
@@ -243,7 +344,11 @@ function init() {  // called once when loading HTML file
   Matter.Events.on(simInfo.engine, 'tick', simStep);
 
   /* Create robot(s). */
-  setRobotNumber(3);  // requires defined simInfo.world
+//<<<<<<< Updated upstream
+  setRobotNumber(5);  // requires defined simInfo.world
+//=======
+  setRobotNumber(1);  // requires defined simInfo.world
+//>>>>>>> Stashed changes
   loadBay(robots[0]);
 
 };
@@ -287,6 +392,9 @@ function senseDistance() {
 
   const context = document.getElementById('arenaDidabot').getContext('2d');
   var bodies = Matter.Composite.allBodies(simInfo.engine.world);
+  bodies = bodies.filter(function(x){return !(x.label==='point')});
+  //console.log(bodies.filter(function(x){return (x.label==='point')}));
+  //console.log(bodies[0].label=='point');
 
   const robotAngle = this.parent.body.angle,
         attachAngle = this.attachAngle,
@@ -499,6 +607,12 @@ function getSensorValById(robot, id) {
 
 function robotMove(robot) {
 // This function is called each timestep and should be used to move the robots
+  robotUpdateSensors(robot)
+  rightSens = robot.sensors[0];
+  leftSens = robot.sensors[1];
+  farRightSens = robot.sensors[2];
+  farLeftSens = robot.sensors[3];
+
 
 
     /*
@@ -508,24 +622,21 @@ function robotMove(robot) {
     distR1 left [3]
      */
 
-    left = robot.sensors[3].value == Infinity ? robot.sensors[3].maxVal : robot.sensors[3].value;
-    left90 = robot.sensors[2].value == Infinity ? robot.sensors[2].maxVal : robot.sensors[2].value;
-
-    right = robot.sensors[1].value == Infinity ? robot.sensors[1].maxVal :  robot.sensors[1].value;
-    right90 = robot.sensors[0].value == Infinity ? robot.sensors[0].maxVal :  robot.sensors[0].value;
-
     const angle = 0.005;
     const forward = 0.0004;
 
-    leftTotal = left + left90;
-    rightTotal = right + right90;
+    left90 = robot.sensors[3].value == Infinity ? robot.sensors[3].maxVal : robot.sensors[3].value;
+    left = robot.sensors[2].value == Infinity ? robot.sensors[2].maxVal : robot.sensors[2].value;
+    right = robot.sensors[1].value == Infinity ? robot.sensors[1].maxVal :  robot.sensors[1].value;
+    right90 = robot.sensors[0].value == Infinity ? robot.sensors[0].maxVal :  robot.sensors[0].value;
 
+    leftTotal = (left + 0.3 * Math.random() - 0.3 * Math.random()) + (left90 + 0.3 * Math.random() - 0.3 * Math.random());
+    rightTotal = (right + 0.3 * Math.random() - 0.3 * Math.random()) + (right90 + 0.3 * Math.random() - 0.3 * Math.random());
     leftAngle = leftTotal * angle;
     rightAngle = rightTotal * angle;
 
-    direction = 0 - leftAngle + rightAngle; //rotates faster when far away
-
     drive(robot, forward);
+    direction = 0 - leftAngle + rightAngle; //rotates faster when far away    
     rotate(robot, direction);
 
 
@@ -663,7 +774,7 @@ function simStep() {
       robots[rr].x = robots[rr].body.position.x - rSize;
       robots[rr].y = robots[rr].body.position.y - rSize;
     }
-    // count and display number of steps
+   // count and display number of steps
     simInfo.curSteps += 1;
     document.getElementById("SimStepLabel").innerHTML =
       padnumber(simInfo.curSteps, 5) +
@@ -671,8 +782,65 @@ function simStep() {
       padnumber(simInfo.maxSteps, 5);
   }
   else {
+      for (var i = 0; i < averageHeapSize.length;i++)
+      {
+          console.log(averageHeapSize[i].toString(), amountOfHeaps[i].toString(), percentageInAHeap[i].toString(), boxesMoved[i].toString())
+      }
     toggleSimulation();
   }
+
+    log = function() {
+        var context = "My Descriptive Logger Prefix:";
+        return Function.prototype.bind.call(console.log, console, context);
+    }();
+
+  if (simInfo.curSteps%60 == 0){
+    updateStatistics();
+  }
+
+    /*if (simInfo.curSteps%5 == 0){
+    Matter.World.add(simInfo.world, [Matter.Bodies.rectangleCollisionless(robots[0].x+simInfo.robotSize/2, robots[0].y+simInfo.robotSize/2, 1, 1,//x, y, simInfo.boxSize, simInfo.boxSize,
+        {frictionAir: simInfo.airDrag,
+            friction: simInfo.boxFric,
+            mass: simInfo.boxMass,
+            role: 'point'})]);};*/
+}
+
+function updateStatistics() {
+    positions = boxes.map(function(x){return x.position});
+    if (lastPositions.length == 0){
+        lastPositions = positions.map(a => Object.assign({}, a));
+	}
+
+    positionsNotAtEdge = positions.filter(function(pos)
+    {return (pos.x > 1.3*simInfo.robotSize + 5)&&
+    (pos.x < simInfo.width - (1.3*simInfo.boxSize + 5))&&
+        (pos.y > 1.3*simInfo.robotSize + 5)&&
+        (pos.y < simInfo.height - (1.3*simInfo.boxSize + 5))});
+
+    groups = calculateGroups(positionsNotAtEdge);
+    amountOfBoxesMoved = 0;
+    for (var i = 0; i < positions.length; i++){
+        if (lastPositions[i].x != positions[i].x || lastPositions[i].y != positions[i].y){
+            amountOfBoxesMoved++;
+        }
+    }
+    boxesMoved.push(amountOfBoxesMoved);
+
+    heaps = groups.filter(function(x){return x.length>2});
+
+    percentageInAHeap.push(flatten(heaps).length / positions.length);
+    amountOfHeaps.push(heaps.length);
+    averageHeapSize.push(averLength(heaps));
+
+    groupSizes = groups.map(function(x){return x.length});
+    distribution = []
+    for (var i = 1; i <= positions.length; i++){
+        distribution.push((groupSizes.filter(function(x){return x == i}).length*i) / positions.length)
+    }
+    distribution[0] += (positions.length - positionsNotAtEdge.length)/ positions.length
+    groupDistribution.push(distribution)
+    lastPositions = positions.map(a => Object.assign({}, a));
 }
 
 function drawBoard() {
@@ -728,7 +896,16 @@ function repaintBay() {
       sensorString += '<br> id \'' + rsensors[ss].id + '\': ' +
         padnumber(rsensors[ss].value, 2);
     }
-    document.getElementById('SensorLabel').innerHTML = sensorString;
+    if(averageHeapSize.length!=0) {
+        document.getElementById('SensorLabel').innerHTML = sensorString
+            + "<br>averageHeapSize = " + averageHeapSize.slice(-1).pop().toString()
+            + "<br>percentageInAHeap = " + percentageInAHeap.slice(-1).pop().toString()
+            + "<br>amountOfHeaps = " + amountOfHeaps.slice(-1).pop().toString()
+            + "<br>groupDistribution = " + groupDistribution.slice(-1).pop().toString();
+        //+ "<br>Amount of heaps: " + heaps.toString()
+        //+ "<br>Amount of multiple-element heaps: " + (heaps - oneElementHeap).toString()
+        //+ "<br>Average heap size: " + averSize.toString();
+    }
   }
 }
 
@@ -786,4 +963,75 @@ function toggleSimulation() {
   else {
     Matter.Runner.stop(simInfo.runner);
   }
+}
+
+function calculateGroups(positions, currentPos = null) {
+  clusters = [];
+  positionsLeft = Array.from(positions); //The array that contains the positions that haven't been assigned to a cluster yet
+
+  while(positionsLeft.length != 0){
+    thisCluster = [positionsLeft[0]];
+    for (k=0;k<thisCluster.length;k++){
+        closePositions = positionsLeft.filter(function(x){return (cartesianDis(x,thisCluster[k])< 40)});
+        thisCluster = thisCluster.concat(closePositions);
+        thisCluster = uniq(thisCluster);
+    }
+    clusters.push(thisCluster);
+    positionsLeft = diff(positionsLeft,thisCluster);
+  }
+  return clusters;
+}
+
+/**
+ * Removes all duplicate elements in an array
+ */
+function uniq(arr){
+  return Array.from(new Set(arr));
+}
+
+/**
+ * Computes the difference/complement between 2 arrays
+ */
+function diff(a1,a2){
+    var result = [];
+    for (var i = 0; i < a1.length; i++) {
+        if (a2.indexOf(a1[i]) === -1) {
+            result.push(a1[i]);
+        }
+    }
+    for (i = 0; i < a2.length; i++) {
+        if (a1.indexOf(a2[i]) === -1) {
+            result.push(a2[i]);
+        }
+    }
+    return Array.from(result);
+}
+
+function cartesianDis(posA,posB){
+  return Math.sqrt( Math.pow(posA.x-posB.x,2) + Math.pow(posA.y-posB.y,2))
+}
+
+function sum(array){
+  total = 0
+  for (i in array){
+    total += array[i]
+  }
+  return total
+}
+
+/**
+ * Computes the average length of the nested arrays in an array
+ */
+function averLength(array){
+    total = 0
+    for (i in array){
+        total += array[i].length
+    }
+    return total/array.length
+}
+
+function flatten(arr) {
+    return arr.reduce(function (flat, toFlatten) {
+        return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+    }, []);
 }

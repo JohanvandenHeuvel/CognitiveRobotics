@@ -1,0 +1,272 @@
+---
+title: "R Notebook"
+output:
+  html_document: default
+  html_notebook: default
+---
+
+```{r ReadData, message=FALSE, warning=FALSE}
+rm(list = ls())
+cat("\014")  
+library(readr)
+library(ggplot2)
+library(plot3Drgl)
+
+#load in Data
+E1 = c("E1R1B12", "E1R1B25", "E1R3B12", "E1R3B25", "E1R5B12", "E1R5B25")
+E1data = list()
+for (j in seq(1,6))
+{
+  string = E1[j]
+  assign(string, list())
+  for (i in seq(0,9))
+  {
+    data <- read_delim(paste("~/Documents/Year2/Cognitive Robotics/Didabots/Data/E1/",string,"/Data/",string,"_0",toString(i),".txt", sep=""), 
+                       " ", escape_double = FALSE, col_names = FALSE, 
+                       trim_ws = TRUE)
+    assign(string, (append(eval(as.name(string)), list(data), after=length(eval(as.name(string))))))
+  }
+  E1data[[j]] <- eval(as.name(string))
+}
+
+#data in colums is:
+#nrdatapoints, avgClustersize, nrOfClusters, percentageInCluster, cubesMoved
+
+#Expand the data
+for(i in seq(1,6)){
+  for(j in seq(1,10)){
+    newDF = list()
+    for(x in seq(1,nrow(E1data[[i]][[j]])))
+    {
+      temp = E1data[[i]][[j]][x,]
+      firstCol = temp[1]
+      nr = as.numeric(unlist(regmatches(firstCol, regexpr("[[:digit:]]+", firstCol))))
+      reps = ifelse(nr == 792, 1, nr)
+      datapoints = list()
+      for(foo in seq(1:reps)){
+        datapoints = rbind(datapoints,temp)
+      }
+      newDF <- rbind(newDF, datapoints) 
+    }
+    E1data[[i]][[j]] <- newDF
+  }
+}
+```
+```{r Plot abc}
+#plot a,b,c from original paper
+boxVec12 = c(1,3,5)
+boxVec12avgClustersize = NULL
+boxVec12nrOfClusters = NULL
+boxVec12percentageInCluster = NULL
+for(box12 in boxVec12)
+{
+  for(test in seq(1,10))
+  {
+    lastDataPoint <- nrow(E1data[[box12]][[test]])
+    boxVec12avgClustersize <- append(boxVec12avgClustersize,unlist(E1data[[box12]][[test]][lastDataPoint,][2]))
+    boxVec12nrOfClusters <- append(boxVec12nrOfClusters,unlist(E1data[[box12]][[test]][lastDataPoint,][3]))
+    boxVec12percentageInCluster <- append(boxVec12percentageInCluster,unlist(E1data[[box12]][[test]][lastDataPoint,][4]))
+  }
+}
+
+boxVec12nrOfClusters <- as.data.frame(boxVec12nrOfClusters)
+boxVec12percentageInCluster <- as.data.frame(round(boxVec12percentageInCluster, digits = 1))
+boxVec12avgClustersize <- as.data.frame(boxVec12avgClustersize)
+Label12 <- as.data.frame(rep("12 cubes",nrow(boxVec12nrOfClusters)))
+dataFrame12 = cbind(boxVec12nrOfClusters, boxVec12percentageInCluster, boxVec12avgClustersize, Label12)
+colnames(dataFrame12) <- c("numberOfClusters", "percentageInCluster", "avgClustersize","Label")
+
+boxVec25 = c(2,4,6)
+boxVec25avgClustersize = NULL
+boxVec25nrOfClusters = NULL
+boxVec25percentageInCluster = NULL
+for(box25 in boxVec25)
+{
+  for(test in seq(1,10))
+  {
+    lastDataPoint <- nrow(E1data[[box25]][[test]])
+    boxVec25avgClustersize <- append(boxVec25avgClustersize,unlist(E1data[[box25]][[test]][lastDataPoint,][2]))
+    boxVec25nrOfClusters <- append(boxVec25nrOfClusters,unlist(E1data[[box25]][[test]][lastDataPoint,][3]))
+    boxVec25percentageInCluster <- append(boxVec25percentageInCluster,unlist(E1data[[box25]][[test]][lastDataPoint,][4]))
+  }
+}
+boxVec25nrOfClusters <- as.data.frame(boxVec25nrOfClusters)
+boxVec25percentageInCluster <- as.data.frame(round(boxVec25percentageInCluster, digits = 1))
+boxVec25avgClustersize <- as.data.frame(boxVec25avgClustersize)
+Label25 <- as.data.frame(rep("25 cubes",nrow(boxVec25nrOfClusters)))
+dataFrame25 = cbind(boxVec25nrOfClusters, boxVec25percentageInCluster, boxVec25avgClustersize, Label25)
+colnames(dataFrame25) <- c("numberOfClusters", "percentageInCluster", "avgClustersize","Label")
+dataFrame = rbind(dataFrame12, dataFrame25)
+dataFrame[is.na(dataFrame)] <- 0
+
+ggplot(dataFrame, aes(numberOfClusters)) + geom_histogram(aes(fill = Label), position = "dodge", binwidth = 0.5)
+ggplot(dataFrame, aes(percentageInCluster)) + geom_histogram(aes(fill = Label), position = "dodge", binwidth = 0.05) + scale_x_continuous(breaks = seq(0, 1, by = 0.1))
+ggplot(dataFrame[which(dataFrame$numberOfClusters > 0),], aes(x = numberOfClusters, y = avgClustersize)) + geom_point(aes(color = Label))
+```
+
+```{r Mean Nr. of Clusters vs. Nr. of Robots}
+#Robot against avgSize
+# c("E1R1B12", "E1R1B25", "E1R3B12", "E1R3B25", "E1R5B12", "E1R5B25")
+#first 10, 1 robot
+#second 10, 3 robot
+#third 10, 5 robot
+Robotnr <- list()
+for(i in c(1,3,5)){
+    #Robotnr <- append(Robotnr,i)
+    Robotnr <- append(Robotnr,paste(toString(i), " robot(s)"))
+}
+Robotnr <- as.data.frame(unlist(Robotnr))
+Robotnr <- rbind(Robotnr, Robotnr)
+dataFrame <- cbind(dataFrame, Robotnr)
+dataFrame[is.na(dataFrame)] <- 0
+
+colnames(dataFrame) <- c("numberOfClusters", "percentageInCluster", "avgClustersize", "Label", "robotNr")
+
+robot1 <- cbind(mean(subset(dataFrame, dataFrame$robotNr == "1  robot(s)" & dataFrame$Label == "12 cubes")[,"numberOfClusters"]), sd(subset(dataFrame, dataFrame$robotNr == "1  robot(s)" & dataFrame$Label == "12 cubes")[,"numberOfClusters"]), "robot 1")
+robot2 <- cbind(mean(subset(dataFrame, dataFrame$robotNr == "3  robot(s)" & dataFrame$Label == "12 cubes")[,"numberOfClusters"]), sd(subset(dataFrame, dataFrame$robotNr == "3  robot(s)" & dataFrame$Label == "12 cubes")[,"numberOfClusters"]), "robot 3")
+robot3 <- cbind(mean(subset(dataFrame, dataFrame$robotNr == "5  robot(s)" & dataFrame$Label == "12 cubes")[,"numberOfClusters"]), sd(subset(dataFrame, dataFrame$robotNr == "5  robot(s)" & dataFrame$Label == "12 cubes")[,"numberOfClusters"]), "robot 5")
+robots12 <- rbind(robot1,robot2,robot3)
+robots12 <- cbind(robots12, c("12 cubes","12 cubes","12 cubes"))
+
+robot1 <- cbind(mean(subset(dataFrame, dataFrame$robotNr == "1  robot(s)" & dataFrame$Label == "25 cubes")[,"numberOfClusters"]), sd(subset(dataFrame, dataFrame$robotNr == "1  robot(s)" & dataFrame$Label == "25 cubes")[,"numberOfClusters"]), "robot 1")
+robot2 <- cbind(mean(subset(dataFrame, dataFrame$robotNr == "3  robot(s)" & dataFrame$Label == "25 cubes")[,"numberOfClusters"]), sd(subset(dataFrame, dataFrame$robotNr == "3  robot(s)" & dataFrame$Label == "25 cubes")[,"numberOfClusters"]), "robot 3")
+robot3 <- cbind(mean(subset(dataFrame, dataFrame$robotNr == "5  robot(s)" & dataFrame$Label == "25 cubes")[,"numberOfClusters"]), sd(subset(dataFrame, dataFrame$robotNr == "5  robot(s)" & dataFrame$Label == "25 cubes")[,"numberOfClusters"]), "robot 5")
+robots25 <- rbind(robot1,robot2,robot3)
+robots25 <- cbind(robots25, c("25 cubes","25 cubes","25 cubes"))
+
+robots <- as.data.frame(rbind(robots12, robots25))
+
+colnames(robots) <- c("meanNrClusters", "sdNrClusters", "nrRobots", "Label")
+
+dodge <- position_dodge(width = 0.9)
+robots$meanNrClusters <- as.numeric(as.matrix(robots$meanNrClusters))
+robots$sdNrClusters <- as.numeric(as.matrix(robots$sdNrClusters))
+
+minlim = robots$meanNrClusters - robots$sdNrClusters
+maxlim = robots$meanNrClusters + robots$sdNrClusters
+limits <- aes(ymax = minlim,
+              ymin = maxlim)
+ 
+ggplot(data = robots, aes(x = nrRobots, y = meanNrClusters, fill = Label)) + geom_bar(stat = "identity", position = dodge) +
+  geom_errorbar(limits, position = dodge, width = 0.25)
+```
+
+```{r Anova}
+#View(nrRobotsA)
+nrRobotsA <- dataFrame[,"robotNr", drop=FALSE]
+nrCubesA <- dataFrame[,"Label", drop=FALSE]
+avgClustersizeA <- dataFrame[,"avgClustersize", drop=FALSE]
+avgClustersizeA <- dataFrame[,"avgClustersize", drop=FALSE]
+
+fit1 <- aov(avgClustersize ~ robotNr * Label, data=dataFrame) 
+summary(fit1)
+
+fit2 <- aov(numberOfClusters ~ robotNr * Label, data=dataFrame) 
+summary(fit2)
+```
+
+```{r 3d plot}
+#y = pushingRate
+#x = nrClusters
+#z = meanClusterSize
+#data in colums is:
+#nrdatapoints, avgClustersize, nrOfClusters, percentageInCluster, cubesMoved
+
+#Combine the data (only 25 boxes)
+#1robot
+
+threedee1robot = list()
+for(i in c(2)){
+  for(x in seq(1,nrow(E1data[[i]][[1]]))){  #loop through rows
+    #temp = as.data.frame(E1data[[i]][[j]])
+    #print(temp)
+    avgClustersizeTotal = 0
+    nrOfClustersTotal = 0
+    cubesMovedTotal = 0
+    avgClustersizeAVG = 0
+    nrOfClustersAVG = 0
+    cubesMovedAVG = 0
+     for(j in seq(1,10)){ #loop through simulations
+        temp <- as.data.frame(E1data[[i]][[j]])
+        temp[is.na(temp)] <- 0
+        avgClustersizeTotal <- avgClustersizeTotal + temp[x,][2]
+        nrOfClustersTotal <- nrOfClustersTotal + temp[x,][3]
+        cubesMovedTotal <-  cubesMovedTotal + temp[x,][5]
+     }
+    avgClustersizeAVG <- avgClustersizeTotal/10
+    nrOfClustersAVG <- nrOfClustersTotal/10
+    cubesMovedAVG <- cubesMovedTotal/10
+    threedee1robot <- rbind(threedee1robot, cbind(avgClustersizeAVG, nrOfClustersAVG, cubesMovedAVG))
+  }
+}
+colnames(threedee1robot) <- c("avgClustersize", "nrOfClusters", "cubesMoved")
+#3D plot 1 robots
+plot3d(y = threedee1robot$avgClustersize, x = threedee1robot$nrOfClusters, z = threedee1robot$cubesMoved, type = "l", col = "red", ylab = "Mean Cluster Size", xlab = "Nr. of Clusters", zlab = "Pushing rate", main = "1 Robots")
+plot3d(y = threedee1robot$avgClustersize, x = threedee1robot$nrOfClusters, z = threedee1robot$cubesMoved, type = "h", col = "grey", add = TRUE, axes = FALSE)
+grid3d("z", at = NULL, col = "gray", lwd = 1, lty = 1, n = 5)
+
+threedee2robot = list()
+for(i in c(4)){
+  for(x in seq(1,nrow(E1data[[i]][[1]]))){  #loop through rows
+    #temp = as.data.frame(E1data[[i]][[j]])
+    #print(temp)
+    avgClustersizeTotal = 0
+    nrOfClustersTotal = 0
+    cubesMovedTotal = 0
+    avgClustersizeAVG = 0
+    nrOfClustersAVG = 0
+    cubesMovedAVG = 0
+     for(j in seq(1,10)){ #loop through simulations
+        temp <- as.data.frame(E1data[[i]][[j]])
+        temp[is.na(temp)] <- 0
+        avgClustersizeTotal <- avgClustersizeTotal + temp[x,][2]
+        nrOfClustersTotal <- nrOfClustersTotal + temp[x,][3]
+        cubesMovedTotal <-  cubesMovedTotal + temp[x,][5]
+     }
+    avgClustersizeAVG <- avgClustersizeTotal/10
+    nrOfClustersAVG <- nrOfClustersTotal/10
+    cubesMovedAVG <- cubesMovedTotal/10
+    threedee2robot <- rbind(threedee2robot, cbind(avgClustersizeAVG, nrOfClustersAVG, cubesMovedAVG))
+  }
+}
+colnames(threedee2robot) <- c("avgClustersize", "nrOfClusters", "cubesMoved")
+#3D plot 3 robots
+plot3d(y = threedee2robot$avgClustersize, x = threedee2robot$nrOfClusters, z = threedee2robot$cubesMoved, type = "l", col = "red", ylab = "Mean Cluster Size", xlab = "Nr. of Clusters", zlab = "Pushing rate", main = "3 Robots")
+plot3d(y = threedee2robot$avgClustersize, x = threedee2robot$nrOfClusters, z = threedee2robot$cubesMoved, type = "h", col = "grey", add = TRUE, axes = FALSE)
+grid3d("z", at = NULL, col = "gray", lwd = 1, lty = 1, n = 5)
+
+threedee3robot = list()
+for(i in c(6)){
+  for(x in seq(1,nrow(E1data[[i]][[1]]))){  #loop through rows
+    #temp = as.data.frame(E1data[[i]][[j]])
+    #print(temp)
+    avgClustersizeTotal = 0
+    nrOfClustersTotal = 0
+    cubesMovedTotal = 0
+    avgClustersizeAVG = 0
+    nrOfClustersAVG = 0
+    cubesMovedAVG = 0
+     for(j in seq(1,10)){ #loop through simulations
+        temp <- as.data.frame(E1data[[i]][[j]])
+        temp[is.na(temp)] <- 0
+        avgClustersizeTotal <- avgClustersizeTotal + temp[x,][2]
+        nrOfClustersTotal <- nrOfClustersTotal + temp[x,][3]
+        cubesMovedTotal <-  cubesMovedTotal + temp[x,][5]
+     }
+    avgClustersizeAVG <- avgClustersizeTotal/10
+    nrOfClustersAVG <- nrOfClustersTotal/10
+    cubesMovedAVG <- cubesMovedTotal/10
+    threedee3robot <- rbind(threedee3robot, cbind(avgClustersizeAVG, nrOfClustersAVG, cubesMovedAVG))
+  }
+}
+colnames(threedee3robot) <- c("avgClustersize", "nrOfClusters", "cubesMoved")
+#3D plot 5 robots
+plot3d(y = threedee3robot$avgClustersize, x = threedee3robot$nrOfClusters, z = threedee3robot$cubesMoved, type = "l", col = "red", ylab = "Mean Cluster Size", xlab = "Nr. of Clusters", zlab = "Pushing rate", , main = "5 Robots")
+plot3d(y = threedee3robot$avgClustersize, x = threedee3robot$nrOfClusters, z = threedee3robot$cubesMoved, type = "h", col = "grey", add = TRUE, axes = FALSE)
+grid3d("z", at = NULL, col = "gray", lwd = 1, lty = 1, n = 5)
+
+library(plotly)
+plot_ly(threedee3robot, x = ~nrOfClusters, y = ~avgClustersize, z = ~cubesMoved, type = 'scatter3d', mode = 'lines',
+        opacity = 1, line = list(width = 6, reverscale = FALSE))
+```
+

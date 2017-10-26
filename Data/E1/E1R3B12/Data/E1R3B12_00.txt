@@ -1,0 +1,13 @@
+didabot_sim_student.js:792 3 1 0.25 0
+2didabot_sim_student.js:792 3 1 0.25 5
+didabot_sim_student.js:792 3 1 0.25 4
+didabot_sim_student.js:792 3 1 0.25 5
+8didabot_sim_student.js:792 3 1 0.25 6
+7didabot_sim_student.js:792 3 1 0.25 7
+didabot_sim_student.js:792 3 1 0.25 8
+didabot_sim_student.js:792 3 1 0.25 9
+4didabot_sim_student.js:792 3 1 0.25 10
+5didabot_sim_student.js:792 4 1 0.3333333333333333 10
+didabot_sim_student.js:792 4 1 0.3333333333333333 11
+2didabot_sim_student.js:792 4 1 0.3333333333333333 12
+299didabot_sim_student.js:792 5 1 0.4166666666666667 12

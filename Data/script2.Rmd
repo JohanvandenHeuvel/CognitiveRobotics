@@ -1,0 +1,159 @@
+---
+title: "R Notebook"
+output:
+  html_document: default
+  html_notebook: default
+---
+
+```{r Read data, message=FALSE, warning=FALSE}
+rm(list = ls())
+cat("\014")  
+library(readr)
+library(ggplot2)
+
+#load in Data
+E1 = c("E2Square", "E2Circle", "E2Triangle")
+E1data = list()
+for (j in seq(1,3))
+{
+  string = E1[j]
+  assign(string, list())
+  for (i in seq(0,9))
+  {
+    data <- read_delim(paste("~/Documents/Year2/Cognitive Robotics/Didabots/Data/E2/",string,"/",string,"_0",toString(i),".txt", sep=""), 
+                       " ", escape_double = FALSE, col_names = FALSE, 
+                       trim_ws = TRUE)
+    assign(string, (append(eval(as.name(string)), list(data), after=length(eval(as.name(string))))))
+  }
+  E1data[[j]] <- eval(as.name(string))
+}
+```
+```{r}
+boxVecSquare = c(1)
+boxVecSquareavgClustersize = NULL
+boxVecSquarenrOfClusters = NULL
+boxVecSquarepercentageInCluster = NULL
+for(boxSquare in boxVecSquare)
+{
+  for(test in seq(1,10))
+  {
+    lastDataPoint <- nrow(E1data[[boxSquare]][[test]])
+    boxVecSquareavgClustersize <- append(boxVecSquareavgClustersize,unlist(E1data[[boxSquare]][[test]][lastDataPoint,][2]))
+    boxVecSquarenrOfClusters <- append(boxVecSquarenrOfClusters,unlist(E1data[[boxSquare]][[test]][lastDataPoint,][3]))
+    boxVecSquarepercentageInCluster <- append(boxVecSquarepercentageInCluster,unlist(E1data[[boxSquare]][[test]][lastDataPoint,][4]))
+  }
+}
+
+boxVecSquarenrOfClusters <- as.data.frame(boxVecSquarenrOfClusters)
+boxVecSquarepercentageInCluster <- as.data.frame(round(boxVecSquarepercentageInCluster, digits = 1))
+boxVecSquareavgClustersize <- as.data.frame(boxVecSquareavgClustersize)
+labelSquare <- as.data.frame(rep("Square",nrow(boxVecSquarenrOfClusters)))
+dataFrameSquare = cbind(boxVecSquarenrOfClusters, boxVecSquarepercentageInCluster, boxVecSquareavgClustersize, labelSquare)
+colnames(dataFrameSquare) <- c("numberOfClusters", "percentageInCluster", "avgClustersize","label")
+
+boxVecCircle = c(2)
+boxVecCircleavgClustersize = NULL
+boxVecCirclenrOfClusters = NULL
+boxVecCirclepercentageInCluster = NULL
+for(boxCircle in boxVecCircle)
+{
+  for(test in seq(1,10))
+  {
+    lastDataPoint <- nrow(E1data[[boxCircle]][[test]])
+    boxVecCircleavgClustersize <- append(boxVecCircleavgClustersize,unlist(E1data[[boxCircle]][[test]][lastDataPoint,][2]))
+    boxVecCirclenrOfClusters <- append(boxVecCirclenrOfClusters,unlist(E1data[[boxCircle]][[test]][lastDataPoint,][3]))
+    boxVecCirclepercentageInCluster <- append(boxVecCirclepercentageInCluster,unlist(E1data[[boxCircle]][[test]][lastDataPoint,][4]))
+  }
+}
+
+boxVecCirclenrOfClusters <- as.data.frame(boxVecCirclenrOfClusters)
+boxVecCirclepercentageInCluster <- as.data.frame(round(boxVecCirclepercentageInCluster, digits = 1))
+boxVecCircleavgClustersize <- as.data.frame(boxVecCircleavgClustersize)
+labelCircle <- as.data.frame(rep("Circle",nrow(boxVecCirclenrOfClusters)))
+dataFrameCircle = cbind(boxVecCirclenrOfClusters, boxVecCirclepercentageInCluster, boxVecCircleavgClustersize, labelCircle)
+colnames(dataFrameCircle) <- c("numberOfClusters", "percentageInCluster", "avgClustersize","label")
+
+boxVecTriangle = c(3)
+boxVecTriangleavgClustersize = NULL
+boxVecTrianglenrOfClusters = NULL
+boxVecTrianglepercentageInCluster = NULL
+for(boxTriangle in boxVecTriangle)
+{
+  for(test in seq(1,10))
+  {
+    lastDataPoint <- nrow(E1data[[boxTriangle]][[test]])
+    boxVecTriangleavgClustersize <- append(boxVecTriangleavgClustersize,unlist(E1data[[boxTriangle]][[test]][lastDataPoint,][2]))
+    boxVecTrianglenrOfClusters <- append(boxVecTrianglenrOfClusters,unlist(E1data[[boxTriangle]][[test]][lastDataPoint,][3]))
+    boxVecTrianglepercentageInCluster <- append(boxVecTrianglepercentageInCluster,unlist(E1data[[boxTriangle]][[test]][lastDataPoint,][4]))
+  }
+}
+
+boxVecTrianglenrOfClusters <- as.data.frame(boxVecTrianglenrOfClusters)
+boxVecTrianglepercentageInCluster <- as.data.frame(round(boxVecTrianglepercentageInCluster, digits = 1))
+boxVecTriangleavgClustersize <- as.data.frame(boxVecTriangleavgClustersize)
+labelTriangle <- as.data.frame(rep("Triangle",nrow(boxVecTrianglenrOfClusters)))
+dataFrameTriangle = cbind(boxVecTrianglenrOfClusters, boxVecTrianglepercentageInCluster, boxVecTriangleavgClustersize, labelTriangle)
+colnames(dataFrameTriangle) <- c("numberOfClusters", "percentageInCluster", "avgClustersize","label")
+
+dataFrame = rbind(dataFrameSquare, dataFrameTriangle, dataFrameCircle)
+dataFrame[is.na(dataFrame)] <- 0
+plot1 <- ggplot(dataFrame, aes(numberOfClusters)) + geom_histogram(aes(fill = label), position = "dodge", binwidth = 0.5) + ggtitle("(a)") + theme(plot.title = element_text(hjust = 0.5))
+plot2 <- ggplot(dataFrame, aes(percentageInCluster)) + geom_histogram(aes(fill = label), position = "dodge", binwidth = 0.05) + scale_x_continuous(breaks = seq(0, 1, by = 0.1)) + ggtitle("(b)") + theme(plot.title = element_text(hjust = 0.5))
+dodge = position_dodge(width = 0.2)
+plot3 <- ggplot(dataFrame[which(dataFrame$numberOfClusters > 0),], aes(x = numberOfClusters, y = avgClustersize)) + geom_point(aes(color = label, shape = label), position = dodge) + scale_shape_manual(values=c(15, 17, 16)) + ggtitle("(c)") + theme(plot.title = element_text(hjust = 0.5))
+
+require(cowplot)
+plot_grid(plot1, plot2,plot3, align='v', axis = 2, nrow = 3)
+```
+```{r Shapes vs AvgSize}
+#Shapes against avgSize
+# c("Square", "Triangle", "Circle")
+#first 10, Square
+#second 10, Triangle
+#third 10, Circle
+
+square <- cbind(mean(subset(dataFrame, dataFrame$label == "Square")[,"numberOfClusters"]), sd(subset(dataFrame, dataFrame$label == "Square" )[,"numberOfClusters"]), "Square")
+triangle <- cbind(mean(subset(dataFrame, dataFrame$label == "Triangle")[,"numberOfClusters"]), sd(subset(dataFrame, dataFrame$label == "Triangle")[,"numberOfClusters"]), "Triangle")
+circle <- cbind(mean(subset(dataFrame, dataFrame$label == "Circle")[,"numberOfClusters"]), sd(subset(dataFrame, dataFrame$label == "Circle")[,"numberOfClusters"]), "Circle")
+shapes <- as.data.frame(rbind(triangle,circle,square))
+colnames(shapes) <- c("meanNrClusters", "sdNrClusters", "Shape")
+
+dodge <- position_dodge(width = 0.9)
+shapes$meanNrClusters <- as.numeric(as.matrix(shapes$meanNrClusters))
+shapes$sdNrClusters <- as.numeric(as.matrix(shapes$sdNrClusters))
+
+minlim = shapes$meanNrClusters - shapes$sdNrClusters
+maxlim = shapes$meanNrClusters + shapes$sdNrClusters
+limits <- aes(ymax = minlim,
+              ymin = maxlim)
+
+#shapes$Shape <- factor(shapes$Shape, levels = shapes$Shape[c(3,1,2:3)])
+ggplotColours <- function(n = 6, h = c(0, 360) + 15){
+  if ((diff(h) %% 360) < 1) h[2] <- h[2] - 360/n
+  hcl(h = (seq(h[1], h[2], length = n)), c = 100, l = 65)
+}
+
+ggplotColours(n = 3)
+
+ggplot(data = shapes, aes(x = Shape, y = meanNrClusters, fill = Shape)) + geom_bar(stat = "identity", position = dodge) +
+  geom_errorbar(limits, position = dodge, width = 0.25) + scale_fill_manual(values = c('#619CFF','#F8766D','#00BA38'))
+```
+
+
+```{r Square vs Triangle}
+cat("\t\t (a) \n")
+t.test(dataFrameSquare$numberOfClusters, dataFrameTriangle$numberOfClusters)
+cat("\t\t (b) \n")
+t.test(dataFrameSquare$percentageInCluster, dataFrameTriangle$percentageInCluster)
+cat("\t\t (c) \n")
+t.test(dataFrameSquare$avgClustersize, dataFrameTriangle$avgClustersize)
+```
+```{r Square vs Circle}
+cat("\t\t (a) \n")
+t.test(dataFrameSquare$numberOfClusters, dataFrameCircle$numberOfClusters)
+cat("\t\t (b) \n")
+t.test(dataFrameSquare$percentageInCluster, dataFrameCircle$percentageInCluster)
+cat("\t\t (c) \n")
+t.test(dataFrameSquare$avgClustersize, dataFrameCircle$avgClustersize)
+```
+
