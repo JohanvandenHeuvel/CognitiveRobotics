@@ -97,9 +97,13 @@ colnames(dataFrameTriangle) <- c("numberOfClusters", "percentageInCluster", "avg
 
 dataFrame = rbind(dataFrameSquare, dataFrameTriangle, dataFrameCircle)
 dataFrame[is.na(dataFrame)] <- 0
-ggplot(dataFrame, aes(numberOfClusters)) + geom_histogram(aes(fill = label), position = "dodge", binwidth = 0.5)
-ggplot(dataFrame, aes(percentageInCluster)) + geom_histogram(aes(fill = label), position = "dodge", binwidth = 0.05) + scale_x_continuous(breaks = seq(0, 1, by = 0.1))
-ggplot(dataFrame[which(dataFrame$numberOfClusters > 0),], aes(x = numberOfClusters, y = avgClustersize)) + geom_point(aes(color = label, shape = label))
+plot1 <- ggplot(dataFrame, aes(numberOfClusters)) + geom_histogram(aes(fill = label), position = "dodge", binwidth = 0.5) + ggtitle("(a)") + theme(plot.title = element_text(hjust = 0.5))
+plot2 <- ggplot(dataFrame, aes(percentageInCluster)) + geom_histogram(aes(fill = label), position = "dodge", binwidth = 0.05) + scale_x_continuous(breaks = seq(0, 1, by = 0.1)) + ggtitle("(b)") + theme(plot.title = element_text(hjust = 0.5))
+dodge = position_dodge(width = 0.2)
+plot3 <- ggplot(dataFrame[which(dataFrame$numberOfClusters > 0),], aes(x = numberOfClusters, y = avgClustersize)) + geom_point(aes(color = label, shape = label), position = dodge) + scale_shape_manual(values=c(15, 17, 16)) + ggtitle("(c)") + theme(plot.title = element_text(hjust = 0.5))
+
+require(cowplot)
+plot_grid(plot1, plot2,plot3, align='v', axis = 2, nrow = 3)
 ```
 ```{r Shapes vs AvgSize}
 #Shapes against avgSize
@@ -124,19 +128,32 @@ limits <- aes(ymax = minlim,
               ymin = maxlim)
 
 #shapes$Shape <- factor(shapes$Shape, levels = shapes$Shape[c(3,1,2:3)])
-ggplot(data = shapes, aes(x = Shape, y = meanNrClusters)) + geom_bar(stat = "identity", position = dodge) +
-  geom_errorbar(limits, position = dodge, width = 0.25)
+ggplotColours <- function(n = 6, h = c(0, 360) + 15){
+  if ((diff(h) %% 360) < 1) h[2] <- h[2] - 360/n
+  hcl(h = (seq(h[1], h[2], length = n)), c = 100, l = 65)
+}
+
+ggplotColours(n = 3)
+
+ggplot(data = shapes, aes(x = Shape, y = meanNrClusters, fill = Shape)) + geom_bar(stat = "identity", position = dodge) +
+  geom_errorbar(limits, position = dodge, width = 0.25) + scale_fill_manual(values = c('#619CFF','#F8766D','#00BA38'))
 ```
 
 
 ```{r Square vs Triangle}
+cat("\t\t (a) \n")
 t.test(dataFrameSquare$numberOfClusters, dataFrameTriangle$numberOfClusters)
+cat("\t\t (b) \n")
 t.test(dataFrameSquare$percentageInCluster, dataFrameTriangle$percentageInCluster)
+cat("\t\t (c) \n")
 t.test(dataFrameSquare$avgClustersize, dataFrameTriangle$avgClustersize)
 ```
 ```{r Square vs Circle}
+cat("\t\t (a) \n")
 t.test(dataFrameSquare$numberOfClusters, dataFrameCircle$numberOfClusters)
+cat("\t\t (b) \n")
 t.test(dataFrameSquare$percentageInCluster, dataFrameCircle$percentageInCluster)
+cat("\t\t (c) \n")
 t.test(dataFrameSquare$avgClustersize, dataFrameCircle$avgClustersize)
 ```
 

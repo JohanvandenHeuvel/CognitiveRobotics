@@ -156,9 +156,13 @@ ggplot(data = robots, aes(x = nrRobots, y = meanNrClusters, fill = Label)) + geo
 nrRobotsA <- dataFrame[,"robotNr", drop=FALSE]
 nrCubesA <- dataFrame[,"Label", drop=FALSE]
 avgClustersizeA <- dataFrame[,"avgClustersize", drop=FALSE]
+avgClustersizeA <- dataFrame[,"avgClustersize", drop=FALSE]
 
-fit <- aov(avgClustersize ~ robotNr * Label, data=dataFrame) 
-summary(fit)
+fit1 <- aov(avgClustersize ~ robotNr * Label, data=dataFrame) 
+summary(fit1)
+
+fit2 <- aov(numberOfClusters ~ robotNr * Label, data=dataFrame) 
+summary(fit2)
 ```
 
 ```{r 3d plot}
