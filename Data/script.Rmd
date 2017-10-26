@@ -264,5 +264,9 @@ colnames(threedee3robot) <- c("avgClustersize", "nrOfClusters", "cubesMoved")
 plot3d(y = threedee3robot$avgClustersize, x = threedee3robot$nrOfClusters, z = threedee3robot$cubesMoved, type = "l", col = "red", ylab = "Mean Cluster Size", xlab = "Nr. of Clusters", zlab = "Pushing rate", , main = "5 Robots")
 plot3d(y = threedee3robot$avgClustersize, x = threedee3robot$nrOfClusters, z = threedee3robot$cubesMoved, type = "h", col = "grey", add = TRUE, axes = FALSE)
 grid3d("z", at = NULL, col = "gray", lwd = 1, lty = 1, n = 5)
+
+library(plotly)
+plot_ly(threedee3robot, x = ~nrOfClusters, y = ~avgClustersize, z = ~cubesMoved, type = 'scatter3d', mode = 'lines',
+        opacity = 1, line = list(width = 6, reverscale = FALSE))
 ```
 
