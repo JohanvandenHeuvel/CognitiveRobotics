@@ -344,7 +344,11 @@ function init() {  // called once when loading HTML file
   Matter.Events.on(simInfo.engine, 'tick', simStep);
 
   /* Create robot(s). */
+//<<<<<<< Updated upstream
+  setRobotNumber(5);  // requires defined simInfo.world
+//=======
   setRobotNumber(1);  // requires defined simInfo.world
+//>>>>>>> Stashed changes
   loadBay(robots[0]);
 
 };
@@ -790,7 +794,7 @@ function simStep() {
         return Function.prototype.bind.call(console.log, console, context);
     }();
 
-  if (simInfo.curSteps%250 == 0){
+  if (simInfo.curSteps%60 == 0){
     updateStatistics();
   }
 
@@ -809,11 +813,10 @@ function updateStatistics() {
 	}
 
     positionsNotAtEdge = positions.filter(function(pos)
-    {return (pos.x > simInfo.robotSize + 5)&&
-    (pos.x < simInfo.width - (simInfo.boxSize + 5))&&
-        (pos.y > simInfo.robotSize + 5)&&
-        (pos.y < simInfo.height - (simInfo.boxSize + 5))});
-
+    {return (pos.x > 1.3*simInfo.robotSize + 5)&&
+    (pos.x < simInfo.width - (1.3*simInfo.boxSize + 5))&&
+        (pos.y > 1.3*simInfo.robotSize + 5)&&
+        (pos.y < simInfo.height - (1.3*simInfo.boxSize + 5))});
 
     groups = calculateGroups(positionsNotAtEdge);
     amountOfBoxesMoved = 0;
